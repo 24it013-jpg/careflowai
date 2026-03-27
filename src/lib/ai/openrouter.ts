@@ -7,6 +7,7 @@ import { OpenRouter } from "@openrouter/sdk";
 
 const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
 const DEFAULT_MODEL = import.meta.env.VITE_OPENROUTER_MODEL || 'nvidia/nemotron-3-nano-30b-a3b:free';
+export const BACKUP_MODEL = import.meta.env.VITE_OPENROUTER_BACKUP_MODEL || 'qwen/qwen3-next-80b-a3b-instruct:free';
 
 const openrouter = new OpenRouter({
     apiKey: OPENROUTER_API_KEY
@@ -51,7 +52,7 @@ export async function callOpenRouter(
             messages,
             temperature: options.temperature ?? 0.3,
             max_tokens: options.max_tokens ?? 2048,
-        });
+        } as any);
 
         // The OpenRouter SDK returns the choice directly or via choices property
         const text = response.choices?.[0]?.message?.content || response.message?.content || '';
@@ -90,7 +91,7 @@ export async function* streamOpenRouter(
     
     messages.push({ role: 'user', content: prompt });
 
-    const stream = await openrouter.chat.send({
+    const stream = await (openrouter.chat.send as any)({
         model: options.model || DEFAULT_MODEL,
         messages,
         stream: true,

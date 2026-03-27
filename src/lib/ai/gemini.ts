@@ -140,8 +140,8 @@ export async function callGeminiVision(
 }
 
 /**
- * Unified AI Caller
- * Defaults to Gemini but can use OpenRouter if configured
+ * Unified AI Caller with Automatic Multi-Model Fallback
+ * Sequence: Gemini -> Primary OpenRouter (Nvidia) -> Backup OpenRouter (Qwen)
  */
 export async function callAI(
     prompt: string,
@@ -149,17 +149,46 @@ export async function callAI(
     chatHistory: any[] = [],
     options: any = {}
 ): Promise<string> {
-    const useOpenRouter = options.provider === 'openrouter' || (!import.meta.env.VITE_GEMINI_API_KEY && import.meta.env.VITE_OPENROUTER_API_KEY);
-    
-    if (useOpenRouter) {
-        return callOpenRouter(prompt, systemPrompt, chatHistory, options);
+    // 1. Try Gemini first (if not explicitly forced to OpenRouter)
+    if (options.provider !== 'openrouter' && import.meta.env.VITE_GEMINI_API_KEY) {
+        try {
+            console.log("Attempting Gemini...");
+            return await callGemini(prompt, systemPrompt, chatHistory, options);
+        } catch (error) {
+            console.warn("Gemini failed or quota reached, falling back to OpenRouter Primary...", error);
+        }
     }
-    
-    return callGemini(prompt, systemPrompt, chatHistory, options);
+
+    // 2. Try Primary OpenRouter (Nvidia)
+    if (import.meta.env.VITE_OPENROUTER_API_KEY) {
+        try {
+            console.log("Attempting OpenRouter Primary (Nvidia)...");
+            return await callOpenRouter(prompt, systemPrompt, chatHistory, {
+                ...options,
+                model: import.meta.env.VITE_OPENROUTER_MODEL || 'nvidia/nemotron-3-nano-30b-a3b:free'
+            });
+        } catch (error) {
+            console.warn("OpenRouter Primary failed, falling back to Backup...", error);
+        }
+
+        // 3. Try Backup OpenRouter (Qwen)
+        try {
+            console.log("Attempting OpenRouter Backup (Qwen)...");
+            return await callOpenRouter(prompt, systemPrompt, chatHistory, {
+                ...options,
+                model: import.meta.env.VITE_OPENROUTER_BACKUP_MODEL || 'qwen/qwen3-next-80b-a3b-instruct:free'
+            });
+        } catch (error) {
+            console.error("All AI models failed.", error);
+            throw new Error("All AI services are currently unavailable. Please try again later.");
+        }
+    }
+
+    throw new Error("No AI services are configured. Please check your API keys.");
 }
 
 /**
- * Unified Vision Caller
+ * Unified Vision Caller with Automatic Multi-Model Fallback
  */
 export async function callAIVision(
     prompt: string,
@@ -167,11 +196,26 @@ export async function callAIVision(
     mimeType: string = 'image/jpeg',
     options: any = {}
 ): Promise<string> {
-    const useOpenRouter = options.provider === 'openrouter' || (!import.meta.env.VITE_GEMINI_API_KEY && import.meta.env.VITE_OPENROUTER_API_KEY);
-    
-    if (useOpenRouter) {
-        return callOpenRouterVision(prompt, base64Image, mimeType, options);
+    // 1. Try Gemini Vision first
+    if (options.provider !== 'openrouter' && import.meta.env.VITE_GEMINI_API_KEY) {
+        try {
+            console.log("Attempting Gemini Vision...");
+            return await callGeminiVision(prompt, base64Image, mimeType, options);
+        } catch (error) {
+            console.warn("Gemini Vision failed, falling back to OpenRouter...", error);
+        }
     }
-    
-    return callGeminiVision(prompt, base64Image, mimeType, options);
+
+    // 2. Try OpenRouter Vision (Nvidia or specific model)
+    if (import.meta.env.VITE_OPENROUTER_API_KEY) {
+        try {
+            console.log("Attempting OpenRouter Vision...");
+            return await callOpenRouterVision(prompt, base64Image, mimeType, options);
+        } catch (error) {
+            console.error("All Vision models failed.", error);
+            throw new Error("Vision services are currently unavailable. Please try again later.");
+        }
+    }
+
+    throw new Error("No Vision services are configured.");
 }
