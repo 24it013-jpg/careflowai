@@ -179,6 +179,17 @@ export async function callAI(
                 model: import.meta.env.VITE_OPENROUTER_BACKUP_MODEL || 'qwen/qwen3-next-80b-a3b-instruct:free'
             });
         } catch (error) {
+            console.warn("OpenRouter Backup failed, falling back to Tertiary...", error);
+        }
+
+        // 4. Try Tertiary OpenRouter (Step-3.5-Flash)
+        try {
+            console.log("Attempting OpenRouter Tertiary (Step-3.5-Flash)...");
+            return await callOpenRouter(prompt, systemPrompt, chatHistory, {
+                ...options,
+                model: import.meta.env.VITE_OPENROUTER_TERTIARY_MODEL || 'stepfun/step-3.5-flash:free'
+            });
+        } catch (error) {
             console.error("All AI models failed.", error);
             throw new Error("All AI services are currently unavailable. Please try again later.");
         }

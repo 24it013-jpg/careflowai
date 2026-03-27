@@ -8,6 +8,7 @@ import { OpenRouter } from "@openrouter/sdk";
 const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
 const DEFAULT_MODEL = import.meta.env.VITE_OPENROUTER_MODEL || 'nvidia/nemotron-3-nano-30b-a3b:free';
 export const BACKUP_MODEL = import.meta.env.VITE_OPENROUTER_BACKUP_MODEL || 'qwen/qwen3-next-80b-a3b-instruct:free';
+export const TERTIARY_MODEL = import.meta.env.VITE_OPENROUTER_TERTIARY_MODEL || 'stepfun/step-3.5-flash:free';
 
 const openrouter = new OpenRouter({
     apiKey: OPENROUTER_API_KEY
