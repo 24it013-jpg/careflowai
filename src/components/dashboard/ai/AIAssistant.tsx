@@ -23,6 +23,8 @@ interface Message {
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { callGemini } from "@/lib/ai/gemini";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface AIAssistantProps {
     open: boolean;
@@ -159,12 +161,18 @@ export function AIAssistant({ open, onOpenChange, initialMessage }: AIAssistantP
                                         </AvatarFallback>
                                     </Avatar>
                                     <div className={cn(
-                                        "rounded-2xl px-4 py-2 max-w-[80%] leading-relaxed",
+                                        "rounded-2xl px-4 py-2 max-w-[80%] leading-relaxed overflow-hidden",
                                         message.role === "user"
                                             ? "bg-blue-600 text-white rounded-tr-none shadow-md shadow-blue-100"
-                                            : "bg-slate-100 text-slate-800 rounded-tl-none border border-slate-200 shadow-sm"
+                                            : "bg-slate-100 text-slate-800 rounded-tl-none border border-slate-200 shadow-sm markdown-content-light"
                                     )}>
-                                        {message.content}
+                                        {message.role === "user" ? (
+                                            message.content
+                                        ) : (
+                                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                                {message.content}
+                                            </ReactMarkdown>
+                                        )}
                                     </div>
                                 </motion.div>
                             ))}

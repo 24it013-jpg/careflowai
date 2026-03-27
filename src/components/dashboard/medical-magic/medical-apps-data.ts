@@ -165,5 +165,13 @@ export const FEATURES: AppFeature[] = [
         link: "/anatomy-ar",
         colSpan: "col-span-12 md:col-span-6 lg:col-span-4"
     },
-
+    {
+        id: "voice-agent",
+        title: "AI Voice Nurse",
+        description: "ElevenLabs Voice Agent.",
+        icon: Mic,
+        color: "text-blue-400",
+        link: "/dashboard/voice-agent",
+        colSpan: "col-span-12 md:col-span-6 lg:col-span-4"
+    },
 ];

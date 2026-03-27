@@ -1,31 +1,14 @@
 /**
- * Gemini AI Service
- * Helper to call Google's Gemini models via fetch
+ * Google Gemini AI Service
+ * Directly interacts with Google's Generative AI API REST endpoint
  */
 
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-const DEFAULT_MODEL = 'gemini-1.5-flash';
+const GEMINI_MODEL = 'gemini-1.5-flash';
+const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
 
-export interface GeminiResponse {
-    candidates: {
-        content: {
-            parts: {
-                text?: string;
-            }[];
-        };
-        finishReason: string;
-    }[];
-}
-
-export interface CallGeminiOptions {
-    model?: string;
-    temperature?: number;
-    maxOutputTokens?: number;
-    responseMimeType?: 'application/json' | 'text/plain';
-}
-
-export interface GeminiContent {
-    role: 'user' | 'model' | 'system';
+export interface GeminiMessage {
+    role: 'user' | 'model';
     parts: { text: string }[];
 }
 
@@ -35,119 +18,126 @@ export interface GeminiContent {
 export async function callGemini(
     prompt: string,
     systemPrompt?: string,
-    chatHistory: GeminiContent[] = [],
-    options: CallGeminiOptions = {}
+    chatHistory: GeminiMessage[] = [],
+    options: any = {}
 ): Promise<string> {
-    const model = options.model || DEFAULT_MODEL;
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+    if (!GEMINI_API_KEY) {
+        console.error('VITE_GEMINI_API_KEY is not defined in .env.local');
+        throw new Error('AI Service is not configured. Please check your API key.');
+    }
 
-    const contents: any[] = [
-        ...chatHistory.map(item => ({
-            role: item.role === 'model' ? 'model' : 'user',
-            parts: item.parts
-        })),
-        {
-            role: 'user',
-            parts: [{ text: prompt }]
-        }
-    ];
+    const contents = [...chatHistory];
+    contents.push({
+        role: 'user',
+        parts: [{ text: prompt }]
+    });
 
     const body: any = {
         contents,
         generationConfig: {
-            temperature: options.temperature ?? 0.3,
-            maxOutputTokens: options.maxOutputTokens ?? 2048,
+            temperature: options.temperature ?? 0.4,
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: options.max_tokens ?? 4096,
         }
     };
 
     if (systemPrompt) {
-        body.system_instruction = {
+        body.systemInstruction = {
             parts: [{ text: systemPrompt }]
         };
     }
 
-    if (options.responseMimeType === 'application/json') {
-        body.generationConfig.responseMimeType = 'application/json';
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            console.error('Gemini API Error:', error);
+            throw new Error(`Gemini API error: ${error.error?.message || response.statusText}`);
+        }
+
+        const data = await response.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (!text) {
+            console.error('Gemini Response Format Error:', data);
+            throw new Error('Gemini returned an empty or invalid response');
+        }
+
+        return text;
+    } catch (error: any) {
+        console.error('Gemini Service Error:', error);
+        throw error;
     }
-
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body)
-    });
-
-    if (!response.ok) {
-        const error = await response.json();
-        console.error('Gemini API Error:', error);
-        throw new Error(`Gemini API error: ${error.message || response.statusText}`);
-    }
-
-    const data: GeminiResponse = await response.json();
-    const text = data.candidates[0]?.content?.parts[0]?.text;
-
-    if (!text) {
-        throw new Error('Gemini returned an empty response');
-    }
-
-    return text;
 }
 
 /**
- * Call Gemini API with image and text
+ * Call Gemini API with image and text (Multimodal)
  */
 export async function callGeminiVision(
     prompt: string,
     base64Image: string,
     mimeType: string = 'image/jpeg',
-    options: CallGeminiOptions = {}
+    options: any = {}
 ): Promise<string> {
-    const model = options.model || DEFAULT_MODEL;
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+    if (!GEMINI_API_KEY) {
+        throw new Error('AI Service is not configured. Please check your API key.');
+    }
 
-    const body: any = {
-        contents: [{
-            parts: [
-                { text: prompt },
-                {
-                    inlineData: {
-                        mimeType: mimeType,
-                        data: base64Image
+    const body = {
+        contents: [
+            {
+                role: 'user',
+                parts: [
+                    { text: prompt },
+                    {
+                        inlineData: {
+                            mimeType: mimeType,
+                            data: base64Image
+                        }
                     }
-                }
-            ]
-        }],
+                ]
+            }
+        ],
         generationConfig: {
-            temperature: options.temperature ?? 0.3,
-            maxOutputTokens: options.maxOutputTokens ?? 2048,
+            temperature: options.temperature ?? 0.4,
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: options.max_tokens ?? 4096,
         }
     };
 
-    if (options.responseMimeType === 'application/json') {
-        body.generationConfig.responseMimeType = 'application/json';
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(`Gemini Vision API error: ${error.error?.message || response.statusText}`);
+        }
+
+        const data = await response.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (!text) {
+            throw new Error('Gemini Vision returned an empty response');
+        }
+
+        return text;
+    } catch (error: any) {
+        console.error('Gemini Vision Service Error:', error);
+        throw error;
     }
-
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body)
-    });
-
-    if (!response.ok) {
-        const error = await response.json();
-        console.error('Gemini Vision API Error:', error);
-        throw new Error(`Gemini Vision API error: ${error.message || response.statusText}`);
-    }
-
-    const data: GeminiResponse = await response.json();
-    const text = data.candidates[0]?.content?.parts[0]?.text;
-
-    if (!text) {
-        throw new Error('Gemini Vision returned an empty response');
-    }
-
-    return text;
 }

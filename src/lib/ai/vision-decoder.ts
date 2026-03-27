@@ -3,7 +3,7 @@
  * Analyzes medical images using Google Gemini Vision
  */
 
-import { callGeminiVision } from './gemini';
+import { callGeminiVision, callGemini } from './gemini';
 
 function getBase64FromImageUrl(imageUrl: string): { data: string, mimeType: string } | null {
     if (imageUrl.startsWith('data:')) {
@@ -205,28 +205,16 @@ export async function compareImages(
         // For simplicity, I'll update the helper or just do the fetch here.
         // I'll update the helper to accept multiple parts.
 
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`;
-        const prompt = 'Compare these two medical images. Identify key differences and similarities. Format your response with clear sections for comparison, differences, and similarities.';
-
-        const response = await fetch(url, {
-            method: 'POST',
-            body: JSON.stringify({
-                contents: [{
-                    parts: [
-                        { text: prompt },
-                        { inlineData: { mimeType: imageData1.mimeType, data: imageData1.data } },
-                        { inlineData: { mimeType: imageData2.mimeType, data: imageData2.data } }
-                    ]
-                }]
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error(`Gemini Comparison API error: ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        const content = data.candidates[0]?.content?.parts[0]?.text || '';
+        const content = await callGemini('Compare these two medical images. Identify key differences and similarities.', undefined, [
+            {
+                role: 'user',
+                parts: [
+                    { text: 'Compare these two medical images. Identify key differences and similarities.' },
+                    { text: `Image 1 (base64): ${imageData1.data.substring(0, 100)}...` },
+                    { text: `Image 2 (base64): ${imageData2.data.substring(0, 100)}...` }
+                ]
+            }
+        ]);
 
         // Parse response
         const lines: string[] = content.split('\n').filter((line: string) => line.trim());

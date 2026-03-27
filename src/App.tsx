@@ -45,6 +45,7 @@ const MoodJournal = lazy(() => import('@/pages/features/mood-journal'));
 const LabResults = lazy(() => import('@/pages/features/lab-results'));
 const AnatomyAR = lazy(() => import('@/pages/features/anatomy-ar'));
 const BMICalculator = lazy(() => import('@/pages/features/bmi-calculator'));
+const VoiceAgent = lazy(() => import('@/pages/features/voice-agent'));
 
 // Simple Layout Wrapper
 const Layout = () => <Outlet />;
@@ -101,6 +102,7 @@ function AnimatedRoutes() {
                         <Route path="mood" element={<MoodJournal />} />
                         <Route path="labs" element={<LabResults />} />
                         <Route path="bmi" element={<BMICalculator />} />
+                        <Route path="voice-agent" element={<VoiceAgent />} />
                     </Route>
                 </Route>
 

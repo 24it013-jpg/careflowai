@@ -26,7 +26,7 @@ export async function processDocument(file: File): Promise<ProcessedDocument> {
           
           Return ONLY the JSON object.`;
 
-        const jsonString = await callGeminiVision(base64, prompt);
+        const jsonString = await callGeminiVision(prompt, base64);
         const analysis = JSON.parse(jsonString);
 
         return {

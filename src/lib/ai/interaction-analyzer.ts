@@ -37,7 +37,7 @@ export async function generateInteractionSummary(
     interaction: DrugInteraction
 ): Promise<AIInteractionSummary> {
     const geminiKey = import.meta.env.VITE_GEMINI_API_KEY;
-
+ 
     if (!geminiKey) {
         // Fallback to basic summary if no API key
         return generateBasicSummary(interaction);

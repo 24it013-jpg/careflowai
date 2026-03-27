@@ -24,6 +24,8 @@ import { useHealthData } from '@/hooks/use-health-data';
 import { useEmergencyStore } from '@/hooks/use-emergency-store';
 import { cn } from '@/lib/utils';
 import { callGemini } from '@/lib/ai/gemini';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface Message {
     id: string;
@@ -299,12 +301,18 @@ export function HealthCompanion() {
                                                 </AvatarFallback>
                                             </Avatar>
                                             <div className={cn(
-                                                "rounded-2xl px-4 py-3 text-sm leading-relaxed max-w-[85%]",
+                                                "rounded-2xl px-4 py-3 text-sm leading-relaxed max-w-[85%] overflow-hidden",
                                                 message.role === 'user'
                                                     ? "bg-blue-600 text-white rounded-tr-none shadow-lg shadow-blue-500/10"
-                                                    : "bg-white/10 text-slate-200 border border-white/10 rounded-tl-none"
+                                                    : "bg-white/10 text-slate-200 border border-white/10 rounded-tl-none markdown-content"
                                             )}>
-                                                {message.content}
+                                                {message.role === 'user' ? (
+                                                    message.content
+                                                ) : (
+                                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                                        {message.content}
+                                                    </ReactMarkdown>
+                                                )}
                                             </div>
                                         </motion.div>
                                     ))}
