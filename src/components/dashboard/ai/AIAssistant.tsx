@@ -22,7 +22,7 @@ interface Message {
 }
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { callGemini } from "@/lib/ai/gemini";
+import { callAI } from "@/lib/ai/gemini";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -64,7 +64,7 @@ export function AIAssistant({ open, onOpenChange, initialMessage }: AIAssistantP
                 parts: [{ text: m.content }]
             }));
 
-            const response = await callGemini(content, systemPrompt, chatHistory);
+            const response = await callAI(content, systemPrompt, chatHistory);
 
             const assistantMessage: Message = {
                 id: (Date.now() + 1).toString(),

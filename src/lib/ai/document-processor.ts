@@ -10,7 +10,7 @@ export interface ProcessedDocument {
     fhirResource?: any;
 }
 
-import { callGeminiVision } from './gemini';
+import { callAIVision } from './gemini';
 
 export async function processDocument(file: File): Promise<ProcessedDocument> {
     const base64 = await fileToBase64(file);
@@ -26,7 +26,7 @@ export async function processDocument(file: File): Promise<ProcessedDocument> {
           
           Return ONLY the JSON object.`;
 
-        const jsonString = await callGeminiVision(prompt, base64);
+        const jsonString = await callAIVision(prompt, base64);
         const analysis = JSON.parse(jsonString);
 
         return {

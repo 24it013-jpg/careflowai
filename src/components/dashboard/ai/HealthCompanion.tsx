@@ -23,7 +23,7 @@ import { useAIChat } from '@/hooks/use-ai-chat';
 import { useHealthData } from '@/hooks/use-health-data';
 import { useEmergencyStore } from '@/hooks/use-emergency-store';
 import { cn } from '@/lib/utils';
-import { callGemini } from '@/lib/ai/gemini';
+import { callAI } from '@/lib/ai/gemini';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -177,7 +177,7 @@ export function HealthCompanion() {
                 parts: [{ text: m.content }]
             }));
 
-            const response = await callGemini(content, systemPrompt, chatHistory);
+            const response = await callAI(content, systemPrompt, chatHistory);
 
             const assistantMessage: Message = {
                 id: (Date.now() + 1).toString(),

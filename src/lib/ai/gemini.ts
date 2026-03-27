@@ -1,7 +1,4 @@
-/**
- * Google Gemini AI Service
- * Directly interacts with Google's Generative AI API REST endpoint
- */
+import { callOpenRouter, callOpenRouterVision } from './openrouter';
 
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 const GEMINI_MODEL = 'gemini-1.5-flash';
@@ -140,4 +137,41 @@ export async function callGeminiVision(
         console.error('Gemini Vision Service Error:', error);
         throw error;
     }
+}
+
+/**
+ * Unified AI Caller
+ * Defaults to Gemini but can use OpenRouter if configured
+ */
+export async function callAI(
+    prompt: string,
+    systemPrompt?: string,
+    chatHistory: any[] = [],
+    options: any = {}
+): Promise<string> {
+    const useOpenRouter = options.provider === 'openrouter' || (!import.meta.env.VITE_GEMINI_API_KEY && import.meta.env.VITE_OPENROUTER_API_KEY);
+    
+    if (useOpenRouter) {
+        return callOpenRouter(prompt, systemPrompt, chatHistory, options);
+    }
+    
+    return callGemini(prompt, systemPrompt, chatHistory, options);
+}
+
+/**
+ * Unified Vision Caller
+ */
+export async function callAIVision(
+    prompt: string,
+    base64Image: string,
+    mimeType: string = 'image/jpeg',
+    options: any = {}
+): Promise<string> {
+    const useOpenRouter = options.provider === 'openrouter' || (!import.meta.env.VITE_GEMINI_API_KEY && import.meta.env.VITE_OPENROUTER_API_KEY);
+    
+    if (useOpenRouter) {
+        return callOpenRouterVision(prompt, base64Image, mimeType, options);
+    }
+    
+    return callGeminiVision(prompt, base64Image, mimeType, options);
 }

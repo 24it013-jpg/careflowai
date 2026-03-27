@@ -1,40 +1,20 @@
 /**
  * OpenRouter AI Service
- * Helper to call AI models via OpenRouter's OpenAI-compatible API
+ * Helper to call AI models via OpenRouter's SDK
  */
 
+import { OpenRouter } from "@openrouter/sdk";
+
 const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
-const DEFAULT_MODEL = 'openrouter/free'; // Uses the free models router for automatic selection
+const DEFAULT_MODEL = import.meta.env.VITE_OPENROUTER_MODEL || 'nvidia/nemotron-3-nano-30b-a3b:free';
 
-export interface OpenRouterResponse {
-    id: string;
-    choices: {
-        message: {
-            content: string;
-            role: string;
-        };
-        finish_reason: string;
-    }[];
-}
-
-export interface CallOpenRouterOptions {
-    model?: string;
-    temperature?: number;
-    max_tokens?: number;
-    response_format?: { type: 'json_object' | 'text' };
-}
+const openrouter = new OpenRouter({
+    apiKey: OPENROUTER_API_KEY
+});
 
 export interface OpenRouterMessage {
-    role: 'user' | 'assistant' | 'system';
-    content: string | (OpenRouterContentPart[]);
-}
-
-export interface OpenRouterContentPart {
-    type: 'text' | 'image_url';
-    text?: string;
-    image_url?: {
-        url: string;
-    };
+    role: 'user' | 'assistant' | 'system' | 'model';
+    content: string;
 }
 
 /**
@@ -43,98 +23,119 @@ export interface OpenRouterContentPart {
 export async function callOpenRouter(
     prompt: string,
     systemPrompt?: string,
-    chatHistory: OpenRouterMessage[] = [],
-    options: CallOpenRouterOptions = {}
+    chatHistory: any[] = [],
+    options: any = {}
 ): Promise<string> {
     if (!OPENROUTER_API_KEY) {
-        console.error('VITE_OPENROUTER_API_KEY is not defined in .env.local');
-        throw new Error('AI Service is not configured. Please check your API key.');
+        throw new Error('VITE_OPENROUTER_API_KEY is not defined in .env.local');
     }
 
-    const model = options.model || DEFAULT_MODEL;
-    const url = 'https://openrouter.ai/api/v1/chat/completions';
-
-    const messages: OpenRouterMessage[] = [];
+    const messages: any[] = [];
     
     if (systemPrompt) {
         messages.push({ role: 'system', content: systemPrompt });
     }
 
-    messages.push(...chatHistory);
+    // Adapt chat history to OpenRouter/OpenAI format
+    const adaptedHistory = chatHistory.map(m => ({
+        role: m.role === 'model' ? 'assistant' : m.role,
+        content: m.content || (Array.isArray(m.parts) ? m.parts[0]?.text : '')
+    }));
+
+    messages.push(...adaptedHistory);
     messages.push({ role: 'user', content: prompt });
 
-    const body: any = {
-        model,
-        messages,
-        temperature: options.temperature ?? 0.3,
-        max_tokens: options.max_tokens ?? 2048,
-    };
-
-    if (options.response_format) {
-        body.response_format = options.response_format;
-    }
-
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-            'HTTP-Referer': window.location.origin,
-            'X-Title': 'CAREflow Ai',
-        },
-        body: JSON.stringify(body)
-    });
-
-    if (!response.ok) {
-        const error = await response.json().catch(() => ({ error: { message: response.statusText } }));
-        console.error('OpenRouter API Error Details:', {
-            status: response.status,
-            statusText: response.statusText,
-            error: error
+    try {
+        const response: any = await openrouter.chat.send({
+            model: options.model || DEFAULT_MODEL,
+            messages,
+            temperature: options.temperature ?? 0.3,
+            max_tokens: options.max_tokens ?? 2048,
         });
-        throw new Error(`OpenRouter API error: ${error.error?.message || response.statusText}`);
+
+        // The OpenRouter SDK returns the choice directly or via choices property
+        const text = response.choices?.[0]?.message?.content || response.message?.content || '';
+        
+        if (!text) {
+            throw new Error('OpenRouter returned an empty response');
+        }
+
+        return text;
+    } catch (error: any) {
+        console.error('OpenRouter SDK Error:', error);
+        throw error;
     }
-
-    const data: OpenRouterResponse = await response.json();
-    const text = data.choices[0]?.message?.content;
-
-    if (!text) {
-        throw new Error('OpenRouter returned an empty response');
-    }
-
-    return text;
 }
 
 /**
- * Call OpenRouter API with image and text (Multimodal)
+ * Stream OpenRouter API response
+ */
+export async function* streamOpenRouter(
+    prompt: string,
+    systemPrompt?: string,
+    chatHistory: any[] = [],
+    options: any = {}
+) {
+    if (!OPENROUTER_API_KEY) {
+        throw new Error('OpenRouter API key is missing');
+    }
+
+    const messages: any[] = [];
+    if (systemPrompt) messages.push({ role: 'system', content: systemPrompt });
+    
+    messages.push(...chatHistory.map(m => ({
+        role: m.role === 'model' ? 'assistant' : m.role,
+        content: m.content || (Array.isArray(m.parts) ? m.parts[0]?.text : '')
+    })));
+    
+    messages.push({ role: 'user', content: prompt });
+
+    const stream = await openrouter.chat.send({
+        model: options.model || DEFAULT_MODEL,
+        messages,
+        stream: true,
+        temperature: options.temperature ?? 0.3
+    });
+
+    for await (const chunk of stream) {
+        const content = (chunk as any).choices?.[0]?.delta?.content;
+        if (content) {
+            yield content;
+        }
+
+        if ((chunk as any).usage) {
+            console.log("Usage stats:", (chunk as any).usage);
+        }
+    }
+}
+
+/**
+ * Legacy Vision Support - Fallback to fetch for Vision if SDK doesn't support specific parts easily
  */
 export async function callOpenRouterVision(
     prompt: string,
     base64Image: string,
     mimeType: string = 'image/jpeg',
-    options: CallOpenRouterOptions = {}
+    options: any = {}
 ): Promise<string> {
-    const model = options.model || DEFAULT_MODEL;
     const url = 'https://openrouter.ai/api/v1/chat/completions';
-
-    const messages: OpenRouterMessage[] = [
-        {
-            role: 'user',
-            content: [
-                { type: 'text', text: prompt },
-                {
-                    type: 'image_url',
-                    image_url: {
-                        url: `data:${mimeType};base64,${base64Image}`
-                    }
-                }
-            ]
-        }
-    ];
-
+    
     const body: any = {
-        model,
-        messages,
+        model: options.model || DEFAULT_MODEL,
+        messages: [
+            {
+                role: 'user',
+                content: [
+                    { type: 'text', text: prompt },
+                    {
+                        type: 'image_url',
+                        image_url: {
+                            url: `data:${mimeType};base64,${base64Image}`
+                        }
+                    }
+                ]
+            }
+        ],
         temperature: options.temperature ?? 0.3,
         max_tokens: options.max_tokens ?? 2048,
     };
@@ -152,16 +153,9 @@ export async function callOpenRouterVision(
 
     if (!response.ok) {
         const error = await response.json();
-        console.error('OpenRouter Vision API Error:', error);
-        throw new Error(`OpenRouter Vision API error: ${error.error?.message || response.statusText}`);
+        throw new Error(`OpenRouter Vision error: ${error.error?.message || response.statusText}`);
     }
 
-    const data: OpenRouterResponse = await response.json();
-    const text = data.choices[0]?.message?.content;
-
-    if (!text) {
-        throw new Error('OpenRouter Vision returned an empty response');
-    }
-
-    return text;
+    const data = await response.json();
+    return data.choices[0]?.message?.content || '';
 }

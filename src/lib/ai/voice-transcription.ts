@@ -3,7 +3,7 @@
  * Handles Web Speech API and Gemini AI integration
  */
 
-import { callGemini } from './gemini';
+import { callAI } from './gemini';
 
 export interface TranscriptionOptions {
     continuous?: boolean;
@@ -166,7 +166,7 @@ export async function structureNotesWithAI(transcript: string, _apiKey?: string)
     try {
         const prompt = `You are a medical scribe assistant. Convert the following clinical conversation into structured SOAP notes (Subjective, Objective, Assessment, Plan). Be concise and use medical terminology appropriately. Format each section clearly with headers. Return only the structured text.`;
 
-        const content = await callGemini(`${prompt}\n\nTranscript:\n${transcript}`, undefined, [], {
+        const content = await callAI(`${prompt}\n\nTranscript:\n${transcript}`, undefined, [], {
             temperature: 0.3
         });
 

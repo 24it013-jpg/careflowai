@@ -16,6 +16,7 @@
     "@mediapipe/face_mesh": "^0.4.1633559619",
     "@mediapipe/hands": "^0.4.1675469240",
     "@mediapipe/holistic": "^0.5.1675471629",
+    "@openrouter/sdk": "^0.10.2",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
     "@tanstack/react-query": "^5.90.20",
