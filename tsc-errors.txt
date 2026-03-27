@@ -1,0 +1,9 @@
+﻿src/components/dashboard/hub/ClinicalReport.tsx(11,5): error TS6133: 'CheckCircle2' is declared but its value is never read.
+src/components/dashboard/hub/ClinicalReport.tsx(12,5): error TS6133: 'XCircle' is declared but its value is never read.
+src/pages/features/expense-ledger.tsx(5,31): error TS6133: 'DollarSign' is declared but its value is never read.
+src/pages/features/family-hub.tsx(3,72): error TS6133: 'Clock' is declared but its value is never read.
+src/pages/features/telemedicine.tsx(5,26): error TS6133: 'Signal' is declared but its value is never read.
+src/pages/features/unified-health-vault.tsx(365,112): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Object literal may only specify known properties, and 'className' does not exist in type 'Partial<unknown> & Attributes'.
+src/pages/features/wearable-simulator.tsx(469,90): error TS2339: Property 'vitals' does not exist on type 'unknown'.

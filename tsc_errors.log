@@ -1,0 +1,28 @@
+src/components/dashboard/health-widgets.tsx(13,5): error TS6133: 'TrendingUp' is declared but its value is never read.
+src/components/dashboard/health-widgets.tsx(98,68): error TS6133: 'i' is declared but its value is never read.
+src/components/dashboard/hub/OptimizedVitalsMonitor.tsx(8,26): error TS2554: Expected 1 arguments, but got 0.
+src/components/dashboard/zones/zone-01-vital-pulse.tsx(8,15): error TS6133: 'Vital' is declared but its value is never read.
+src/components/dashboard/zones/zone-02-clinical-control.tsx(32,11): error TS6133: 'activeBodyParts' is declared but its value is never read.
+src/components/dashboard/zones/zone-04-financial-nexus.tsx(4,1): error TS6133: 'Button' is declared but its value is never read.
+src/components/dashboard/zones/zone-04-financial-nexus.tsx(5,36): error TS6133: 'AlertCircle' is declared but its value is never read.
+src/components/dashboard/zones/zone-04-financial-nexus.tsx(6,1): error TS6133: 'Progress' is declared but its value is never read.
+src/components/medication/interaction-graph.tsx(7,1): error TS6133: 'AIInteractionSummary' is declared but its value is never read.
+src/components/medication/interaction-graph.tsx(21,22): error TS2554: Expected 1 arguments, but got 0.
+src/components/medication/interaction-graph.tsx(60,12): error TS6133: 'hoverNode' is declared but its value is never read.
+src/components/medication/interaction-graph.tsx(70,33): error TS2339: Property 'id' does not exist on type 'string'.
+src/components/medication/interaction-graph.tsx(70,63): error TS2339: Property 'id' does not exist on type 'string'.
+src/components/medication/interaction-graph.tsx(72,55): error TS2339: Property 'id' does not exist on type 'string'.
+src/components/medication/interaction-graph.tsx(72,84): error TS2339: Property 'id' does not exist on type 'string'.
+src/components/medication/interaction-graph.tsx(72,101): error TS2339: Property 'id' does not exist on type 'string'.
+src/components/ui/tabs.tsx(99,10): error TS2322: Type '{ defaultChecked?: boolean | undefined; defaultValue?: string | number | readonly string[] | undefined; suppressContentEditableWarning?: boolean | undefined; suppressHydrationWarning?: boolean | undefined; ... 278 more ...; className: string; }' is not assignable to type 'Omit<HTMLMotionProps<"div">, "ref">'.
+  Types of property 'onAnimationStart' are incompatible.
+    Type 'AnimationEventHandler<HTMLDivElement> | undefined' is not assignable to type '((definition: AnimationDefinition) => void) | undefined'.
+      Type 'AnimationEventHandler<HTMLDivElement>' is not assignable to type '(definition: AnimationDefinition) => void'.
+        Types of parameters 'event' and 'definition' are incompatible.
+          Type 'AnimationDefinition' is not assignable to type 'AnimationEvent<HTMLDivElement>'.
+            Type 'string' is not assignable to type 'AnimationEvent<HTMLDivElement>'.
+src/lib/ai/medication-autocomplete.ts(131,18): error TS2503: Cannot find namespace 'NodeJS'.
+src/pages/features/body-map.tsx(3,26): error TS6133: 'X' is declared but its value is never read.
+src/pages/features/body-map.tsx(3,29): error TS6133: 'ChevronRight' is declared but its value is never read.
+src/pages/features/diet-nutrition.tsx(1,1): error TS6133: 'useState' is declared but its value is never read.
+src/pages/features/expense-ledger.tsx(2,8): error TS6133: 'React' is declared but its value is never read.

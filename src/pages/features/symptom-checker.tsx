@@ -1,0 +1,270 @@
+import { motion, AnimatePresence } from "framer-motion";
+import { Brain, Send, AlertTriangle, CheckCircle, Stethoscope, Sparkles, User, ShieldCheck } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { cn } from "@/lib/utils";
+
+interface Message {
+    id: string;
+    role: "user" | "ai";
+    text: string;
+    triage?: "self-care" | "doctor" | "emergency";
+    conditions?: { name: string; confidence: number; color: string }[];
+}
+
+const SYMPTOM_RESPONSES: Record<string, Message> = {
+    default: {
+        id: "ai-1",
+        role: "ai",
+        text: "Neural analysis complete. Based on your symptom profile, I've identified several potential markers. Please review the confidence scores below.",
+        conditions: [
+            { name: "Common Cold / Rhinovirus", confidence: 72, color: "text-blue-400" },
+            { name: "Seasonal Allergies", confidence: 18, color: "text-teal-400" },
+            { name: "Viral Sinusitis", confidence: 10, color: "text-purple-400" },
+        ],
+        triage: "self-care",
+    },
+    chest: {
+        id: "ai-2",
+        role: "ai",
+        text: "CRITICAL ALERT: Your reported symptoms indicate potential thoracic distress. High-priority triage protocol activated. Seek immediate diagnostic evaluation.",
+        conditions: [
+            { name: "Musculoskeletal Pain", confidence: 45, color: "text-amber-400" },
+            { name: "Gastroesophageal Reflux", confidence: 30, color: "text-blue-400" },
+            { name: "Acute Cardiac Syndrome (Risk)", confidence: 25, color: "text-red-400" },
+        ],
+        triage: "emergency",
+    },
+    headache: {
+        id: "ai-3",
+        role: "ai",
+        text: "Diagnostic sweep finished. The reported cephalic discomfort patterns are consistent with several common pathologies.",
+        conditions: [
+            { name: "Tension-Type Headache", confidence: 60, color: "text-blue-400" },
+            { name: "Migraine with Aura", confidence: 28, color: "text-purple-400" },
+            { name: "Cervicogenic Pain", confidence: 12, color: "text-teal-400" },
+        ],
+        triage: "doctor",
+    },
+};
+
+const TRIAGE_CONFIG = {
+    "self-care": { label: "Standard Home-care Protocol", color: "text-teal-400", bg: "bg-teal-500/10 border-teal-500/20", icon: CheckCircle },
+    "doctor": { label: "Professional Consultation Advised", color: "text-amber-400", bg: "bg-amber-500/10 border-amber-500/20", icon: Stethoscope },
+    "emergency": { label: "Immediate Emergency Triage Required", color: "text-red-400", bg: "bg-red-500/10 border-red-500/20", icon: AlertTriangle },
+};
+
+const QUICK_SYMPTOMS = ["Chronic Fatigue", "Chest tightness", "Migraine", "Slight Fever", "Recurring Nausea"];
+
+export default function SymptomChecker() {
+    const [messages, setMessages] = useState<Message[]>([
+        { id: "intro", role: "ai", text: "Systems online. I am CAREflow's diagnostic assistant. Describe your physiological state in detail to begin a differential analysis." }
+    ]);
+    const [input, setInput] = useState("");
+    const [isTyping, setIsTyping] = useState(false);
+    const bottomRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages, isTyping]);
+
+    const sendMessage = (text: string) => {
+        if (!text.trim()) return;
+        const userMsg: Message = { id: `u-${Date.now()}`, role: "user", text };
+        setMessages(prev => [...prev, userMsg]);
+        setInput("");
+        setIsTyping(true);
+
+        setTimeout(() => {
+            setIsTyping(false);
+            const lower = text.toLowerCase();
+            const response = lower.includes("chest") ? SYMPTOM_RESPONSES.chest
+                : (lower.includes("head") || lower.includes("migraine")) ? SYMPTOM_RESPONSES.headache
+                    : SYMPTOM_RESPONSES.default;
+            setMessages(prev => [...prev, { ...response, id: `ai-${Date.now()}` }]);
+        }, 1500);
+    };
+
+    return (
+        <div className="min-h-screen bg-slate-950 text-white p-6 md:p-12 flex flex-col font-sans relative overflow-hidden">
+             {/* Background Effects */}
+             <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-purple-600/10 rounded-full blur-[130px] mix-blend-screen pointer-events-none" />
+            <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[140px] mix-blend-screen pointer-events-none" />
+
+            <div className="max-w-4xl mx-auto w-full flex-1 flex flex-col relative z-10">
+                {/* Header */}
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center gap-5 mb-10"
+                >
+                    <div className="size-14 rounded-[1.25rem] bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center shadow-2xl shadow-purple-500/20 border border-white/10">
+                        <Brain className="size-7 text-white" />
+                    </div>
+                    <div>
+                        <h1 className="text-3xl font-black text-white tracking-tight">Oracle Diagnostics</h1>
+                        <p className="text-xs text-white/40 font-bold uppercase tracking-[0.2em]">Neural Symptom Synthesis v4.2</p>
+                    </div>
+                    <div className="ml-auto flex items-center gap-3 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl">
+                        <div className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="text-[10px] font-black text-white/60 uppercase tracking-widest">Core Status: Optimal</span>
+                    </div>
+                </motion.div>
+
+                {/* Chat Container */}
+                <div className="flex-1 overflow-hidden flex flex-col premium-glass-panel rounded-[2.5rem] border border-white/5 bg-white/[0.01] mb-8 shadow-2xl relative">
+                    <div className="absolute top-0 inset-x-0 h-20 bg-gradient-to-b from-slate-950/40 to-transparent pointer-events-none z-10" />
+                    
+                    <div className="flex-1 overflow-y-auto p-6 md:p-10 space-y-8 custom-scrollbar">
+                        <AnimatePresence initial={false}>
+                            {messages.map((msg) => (
+                                <motion.div
+                                    key={msg.id}
+                                    initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    className={cn("flex gap-4", msg.role === "user" ? "flex-row-reverse" : "flex-row")}
+                                >
+                                    <div className={cn(
+                                        "size-10 rounded-xl flex items-center justify-center shrink-0 border",
+                                        msg.role === "user" ? "bg-indigo-500/20 border-indigo-500/30 text-indigo-300" : "bg-purple-500/20 border-purple-500/30 text-purple-300"
+                                    )}>
+                                        {msg.role === "user" ? <User className="size-5" /> : <Sparkles className="size-5" />}
+                                    </div>
+                                    <div className={cn(
+                                        "max-w-[75%] space-y-4",
+                                        msg.role === "user" ? "items-end text-right" : "items-start"
+                                    )}>
+                                        <div className={cn(
+                                            "inline-block rounded-[2rem] px-6 py-4 border text-[15px] leading-relaxed relative",
+                                            msg.role === "user"
+                                                ? "bg-indigo-500/10 border-indigo-500/20 text-white font-medium"
+                                                : "bg-white/5 border-white/10 text-white/80"
+                                        )}>
+                                            {msg.text}
+                                        </div>
+
+                                        {msg.conditions && (
+                                            <div className="grid grid-cols-1 md:grid-cols-1 gap-4 w-full">
+                                                <div className="p-6 rounded-[2rem] bg-white/[0.03] border border-white/5 space-y-5">
+                                                    <h4 className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] flex items-center gap-2">
+                                                        <ShieldCheck className="size-3" /> Predictive Condition Analysis
+                                                    </h4>
+                                                    <div className="space-y-4">
+                                                        {msg.conditions.map((c, i) => (
+                                                            <div key={i} className="space-y-2">
+                                                                <div className="flex justify-between items-center text-xs">
+                                                                    <span className={cn("font-black tracking-wide", c.color)}>{c.name}</span>
+                                                                    <span className="text-white/40 font-mono italic">{c.confidence}%</span>
+                                                                </div>
+                                                                <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                                                                    <motion.div
+                                                                        initial={{ width: 0 }}
+                                                                        animate={{ width: `${c.confidence}%` }}
+                                                                        transition={{ delay: 0.4 + i * 0.1, duration: 0.8, ease: "easeOut" }}
+                                                                        className={cn("h-full rounded-full shadow-[0_0_8px]", c.color.replace('text-', 'bg-'))}
+                                                                        style={{ filter: "brightness(1.2)" }}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+
+                                                {msg.triage && (
+                                                    <motion.div
+                                                        initial={{ opacity: 0, x: -10 }}
+                                                        animate={{ opacity: 1, x: 0 }}
+                                                        transition={{ delay: 0.8 }}
+                                                        className={cn(
+                                                            "p-5 rounded-[1.75rem] border flex items-center gap-4 shadow-xl",
+                                                            TRIAGE_CONFIG[msg.triage].bg
+                                                        )}
+                                                    >
+                                                        <div className={cn("size-10 rounded-xl flex items-center justify-center shrink-0", TRIAGE_CONFIG[msg.triage].color.replace('text-', 'bg-').replace('400', '500/20'))}>
+                                                            {(() => {
+                                                                const Icon = TRIAGE_CONFIG[msg.triage].icon;
+                                                                return <Icon className={cn("size-5", TRIAGE_CONFIG[msg.triage].color)} />;
+                                                            })()}
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-[10px] font-black text-white/30 uppercase tracking-widest leading-none mb-1.5">Primary Recommendation</p>
+                                                            <span className={cn("text-sm font-black tracking-tight", TRIAGE_CONFIG[msg.triage].color)}>
+                                                                {TRIAGE_CONFIG[msg.triage].label}
+                                                            </span>
+                                                        </div>
+                                                    </motion.div>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+
+                        {isTyping && (
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-4">
+                                <div className="size-10 rounded-xl bg-purple-500/20 border border-purple-500/30 text-purple-300 flex items-center justify-center">
+                                    <Sparkles className="size-5" />
+                                </div>
+                                <div className="bg-white/5 border border-white/10 rounded-[1.5rem] px-6 py-4 flex items-center gap-2">
+                                    {[0, 1, 2].map(i => (
+                                        <motion.div
+                                            key={i}
+                                            animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.1, 0.8] }}
+                                            transition={{ repeat: Infinity, duration: 1.2, delay: i * 0.2 }}
+                                            className="size-1.5 rounded-full bg-purple-400"
+                                        />
+                                    ))}
+                                </div>
+                            </motion.div>
+                        )}
+                        <div ref={bottomRef} className="h-4" />
+                    </div>
+
+                    {/* Quick Selection Footer */}
+                    <div className="px-6 py-4 border-t border-white/5 bg-white/[0.02]">
+                        <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+                           {QUICK_SYMPTOMS.map(s => (
+                                <button
+                                    key={s}
+                                    onClick={() => sendMessage(s)}
+                                    className="whitespace-nowrap px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-white hover:border-white/20 hover:bg-white/10 transition-all"
+                                >
+                                    {s}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Input Section */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="relative group mb-4"
+                >
+                    <input
+                        value={input}
+                        onChange={e => setInput(e.target.value)}
+                        onKeyDown={e => e.key === "Enter" && sendMessage(input)}
+                        placeholder="State your physiological symptoms for neural synthesis..."
+                        className="w-full bg-white/[0.03] border border-white/5 rounded-[2rem] px-8 py-6 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-purple-500/40 focus:bg-white/[0.05] transition-all backdrop-blur-3xl shadow-2xl"
+                    />
+                    <motion.button
+                        whileHover={{ scale: 1.05, x: -5 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => sendMessage(input)}
+                        className="absolute right-3 top-3 bottom-3 px-6 rounded-[1.5rem] flex items-center justify-center text-white shadow-lg hover:shadow-purple-500/20 transition-all disabled:opacity-50"
+                        style={{ background: "linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%)" }}
+                        disabled={!input.trim()}
+                    >
+                        <Send className="size-5" />
+                    </motion.button>
+                </motion.div>
+
+                <p className="text-center text-[9px] font-bold text-white/10 uppercase tracking-[0.3em] mb-4">
+                    Clinical AI Overlay · Automated Health Triage Network
+                </p>
+            </div>
+        </div>
+    );
+}

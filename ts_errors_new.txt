@@ -1,0 +1,4 @@
+﻿src/components/dashboard/hub/vitals-modal.tsx(6,27): error TS6133: 'Scale' is declared but its value is never read.
+src/components/dashboard/hub/vitals-modal.tsx(6,34): error TS6133: 'Wind' is declared but its value is never read.
+src/lib/ai/interaction-analyzer.ts(65,53): error TS2345: Argument of type '{ responseMimeType: string; temperature: number; }' is not assignable to parameter of type 'string'.
+src/lib/ai/voice-transcription.ts(169,85): error TS2345: Argument of type '{ temperature: number; }' is not assignable to parameter of type 'string'.

@@ -1,0 +1,9 @@
+
+> careflow-ai@0.1.0 build
+> tsc && vite build
+
+src/components/dashboard/health-widgets.tsx(13,5): error TS6133: 'TrendingUp' is declared but its value is never read.
+src/components/dashboard/health-widgets.tsx(98,68): error TS6133: 'i' is declared but its value is never read.
+src/components/dashboard/zones/zone-01-vital-pulse.tsx(8,15): error TS6133: 'Vital' is declared but its value is never read.
+src/components/dashboard/zones/zone-02-clinical-control.tsx(32,11): error TS6133: 'activeBodyParts' is declared but its value is never read.
+
