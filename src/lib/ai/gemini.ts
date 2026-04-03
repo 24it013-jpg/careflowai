@@ -65,7 +65,7 @@ async function geminiGenerateOnce(
  */
 async function geminiGenerate(body: object): Promise<string> {
     if (!GEMINI_API_KEY) {
-        throw new Error('AI Service is not configured. Please check your API key.');
+        throw new Error('Gemini API key is not configured. Please add VITE_GEMINI_API_KEY to your environment variables.');
     }
 
     const failures: string[] = [];
@@ -286,5 +286,5 @@ export async function callAIVision(
         }
     }
 
-    throw new Error('No Vision services are configured.');
+    throw new Error('AI services are not configured. Please add VITE_GEMINI_API_KEY or VITE_OPENROUTER_API_KEY to your environment variables.');
 }
