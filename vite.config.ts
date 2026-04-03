@@ -11,6 +11,7 @@ export default defineConfig({
         compression(),
         VitePWA({
             registerType: 'autoUpdate',
+            useCredentials: true,
             includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
             manifest: {
                 name: 'CAREflow AI',
@@ -36,32 +37,7 @@ export default defineConfig({
         target: 'esnext',
         rollupOptions: {
             output: {
-                manualChunks(id) {
-                    if (id.includes('node_modules')) {
-                        if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
-                            return 'vendor-react';
-                        }
-                        if (id.includes('@react-three') || id.includes('three')) {
-                            return 'vendor-three';
-                        }
-                        if (id.includes('@mediapipe')) {
-                            return 'vendor-mediapipe';
-                        }
-                        if (id.includes('recharts') || id.includes('d3')) {
-                            return 'vendor-charts';
-                        }
-                        if (id.includes('@clerk')) {
-                            return 'vendor-clerk';
-                        }
-                        if (id.includes('framer-motion') || id.includes('motion')) {
-                            return 'vendor-motion';
-                        }
-                        if (id.includes('@tanstack')) {
-                            return 'vendor-tanstack';
-                        }
-                        return 'vendor-core';
-                    }
-                }
+                // Let Vite and Rollup handle chunking automatically to prevent module evaluation order issues
             }
         }
     }
