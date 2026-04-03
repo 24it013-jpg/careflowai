@@ -78,7 +78,7 @@ export function TopNav() {
                             <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" className="relative h-10 w-10 rounded-full border-2 border-white/10 p-0 overflow-hidden ring-offset-black transition-all hover:ring-2 hover:ring-blue-500 hover:ring-offset-2">
                                     <Avatar className="h-full w-full">
-                                        <AvatarImage src="/placeholder-avatar.jpg" alt="@user" />
+                                        <AvatarImage src="" alt="@user" />
                                         <AvatarFallback className="bg-gradient-to-br from-blue-600 to-indigo-600 text-white font-medium">DR</AvatarFallback>
                                     </Avatar>
                                 </Button>
