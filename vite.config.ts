@@ -35,6 +35,7 @@ export default defineConfig({
     envPrefix: ['VITE_', 'NEXT_PUBLIC_'],
     build: {
         target: 'esnext',
+        chunkSizeWarningLimit: 3000, // Supresses warning for chunks up to 3MB
         rollupOptions: {
             output: {
                 // Let Vite and Rollup handle chunking automatically to prevent module evaluation order issues
