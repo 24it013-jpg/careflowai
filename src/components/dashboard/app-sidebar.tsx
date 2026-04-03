@@ -28,11 +28,6 @@ import {
 // CareFlow Menu Items
 const items = [
     {
-        title: "Vital Pulse",
-        url: "#vital-pulse",
-        icon: Activity,
-    },
-    {
         title: "Clinical Control",
         url: "#clinical-control",
         icon: Box, // Placeholder for 3D/Anatomy
@@ -41,16 +36,6 @@ const items = [
         title: "Medical Intelligence",
         url: "#medical-intelligence",
         icon: BrainCircuit,
-    },
-    {
-        title: "Financial Nexus",
-        url: "#financial-nexus",
-        icon: CreditCard,
-    },
-    {
-        title: "Health Vault",
-        url: "#health-vault",
-        icon: FileText,
     },
     {
         title: "Care Command",

@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, MapPin, Star, Calendar, ArrowRight, Stethoscope, Filter, Check, Shield } from "lucide-react";
+import { Search, MapPin, Star, Calendar, ArrowRight, Stethoscope, Filter, Check, Shield, Sparkles, Loader2, Brain, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import confetti from "canvas-confetti";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { analyzeSymptomsForSpecialist, type AIAnalysis } from "@/lib/ai/specialist-matcher";
+import { AIResponseCard } from "@/components/ui/ai-response-card";
 
 // Mock Data
 const SPECIALISTS = [
@@ -60,8 +62,27 @@ const SPECIALISTS = [
 
 export default function SpecialistMatch() {
     const [searchQuery, setSearchQuery] = useState("");
+    const [symptoms, setSymptoms] = useState("");
+    const [isAnalyzing, setIsAnalyzing] = useState(false);
+    const [aiResult, setAiResult] = useState<AIAnalysis | null>(null);
     const [selectedSpecialist, setSelectedSpecialist] = useState<number | null>(null);
     const [bookingStatus, setBookingStatus] = useState<"idle" | "booked">("idle");
+
+    const handleAnalyze = async () => {
+        if (!symptoms.trim()) return;
+        setIsAnalyzing(true);
+        try {
+            const result = await analyzeSymptomsForSpecialist(symptoms);
+            setAiResult(result);
+            if (result.suggestedSpecialists.length > 0) {
+                setSearchQuery(result.suggestedSpecialists[0].type);
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsAnalyzing(false);
+        }
+    };
 
     const handleOneTapBook = () => {
         setBookingStatus("booked");
@@ -88,17 +109,85 @@ export default function SpecialistMatch() {
             </div>
 
             <div className="max-w-6xl mx-auto relative z-10">
-                <header className="mb-12 text-center md:text-left">
-                    <h1 className="text-5xl font-light tracking-tight flex items-center justify-center md:justify-start gap-4 mb-4 text-white">
-                        <span className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-2xl text-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.2)] backdrop-blur-sm">
+                <header className="mb-12">
+                    <motion.h1
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-4xl font-black tracking-tight flex items-center gap-4 text-white mb-4"
+                    >
+                        <span className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-2xl text-blue-400 shadow-lg shadow-blue-500/10">
                             <Stethoscope className="size-8" />
                         </span>
                         Specialist Match
-                    </h1>
-                    <p className="text-white/50 text-xl font-light max-w-2xl">
-                        AI-powered matching to find the perfect specialist based on your symptoms, location, and insurance.
+                    </motion.h1>
+                    <p className="text-white/50 text-lg font-light max-w-2xl leading-relaxed">
+                        Find the right specialist for your needs. Our AI analyzes your symptoms and matches you with top-rated medical experts in your area.
                     </p>
                 </header>
+
+                {/* AI Symptom Input Section */}
+                <div className="grid md:grid-cols-1 gap-8 mb-16">
+                    <div className="bg-white/5 border border-white/10 rounded-[2.5rem] p-8 backdrop-blur-md relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-[60px] pointer-events-none" />
+                        
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="p-2 bg-blue-500/20 rounded-xl">
+                                <Brain className="size-5 text-blue-400" />
+                            </div>
+                            <h2 className="text-xl font-medium text-white">AI Symptom Analysis</h2>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div className="relative group">
+                                <div className="absolute inset-0 bg-blue-500/5 rounded-2xl blur-lg group-focus-within:bg-blue-500/10 transition-all opacity-50" />
+                                <Input
+                                    className="relative bg-white/5 border-white/10 h-16 rounded-2xl px-6 text-lg focus-visible:ring-blue-500/50 placeholder:text-white/20"
+                                    placeholder="Describe your symptoms (e.g., persistent knee pain, sharp headache)..."
+                                    value={symptoms}
+                                    onChange={(e) => setSymptoms(e.target.value)}
+                                    onKeyDown={(e) => e.key === "Enter" && handleAnalyze()}
+                                />
+                                <Button 
+                                    onClick={handleAnalyze}
+                                    disabled={isAnalyzing || !symptoms.trim()}
+                                    className="absolute right-2 top-2 h-12 px-6 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all disabled:opacity-50"
+                                >
+                                    {isAnalyzing ? <Loader2 className="size-5 animate-spin" /> : <Sparkles className="size-5 mr-2" />}
+                                    {isAnalyzing ? "Analyzing..." : "Analyze Symptoms"}
+                                </Button>
+                            </div>
+
+                            <AnimatePresence>
+                                {aiResult && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="mt-6"
+                                    >
+                                        <AIResponseCard 
+                                            title="Specialist Analysis"
+                                            source="Smart Match Engine"
+                                            content={`
+# Analysis Complete
+Based on your symptoms: **"${symptoms}"**, here is our clinical mapping.
+
+## Detected Indicators
+${aiResult.possibleConditions.map(cond => `- ${cond}`).join('\n')}
+
+## Recommended Specialist Type
+### **${aiResult.suggestedSpecialists[0]?.type}**
+*Reasoning: ${aiResult.suggestedSpecialists[0]?.reason}*
+
+## Urgent Indicators
+${aiResult.suggestedSpecialists[0]?.urgency === 'emergency' ? '> **CRITICAL:** Immediate attention advised.' : '> Standard consultation timeframe recommended.'}
+                                            `}
+                                        />
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+                    </div>
+                </div>
 
                 {/* Search Bar */}
                 <div className="relative max-w-2xl mb-16 group mx-auto md:mx-0">

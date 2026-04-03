@@ -86,31 +86,31 @@ const features = [
     {
         icon: Brain,
         title: "AI-Powered Triage",
-        description: "Deep learning algorithms predict patient deterioration hours before clinical signs visibly appear.",
+        description: "Deep learning algorithms predict patient deterioration and provide automated symptom assessments.",
         delay: 0.2
     },
     {
         icon: Shield,
-        title: "Secure Vault",
-        description: "End-to-end multi-layer encryption ensures patient data remains absolutely private and fully compliant with HIPAA & SOC2.",
+        title: "Neural Health Vault",
+        description: "Secure, AI-indexed storage for all your medical records, prescriptions, and lab reports with end-to-end encryption.",
         delay: 0.3
     },
     {
         icon: Zap,
-        title: "Instant Alerts",
-        description: "Intelligent push notifications for critical events, ensuring rapid response times for medical staff without alert fatigue.",
+        title: "Longevity Insights",
+        description: "Personalized biohacking and anti-aging recommendations based on your unique physiological biomarkers.",
         delay: 0.4
     },
     {
         icon: Globe,
-        title: "Global Sync",
-        description: "Synchronize longitudinal patient data across multiple facilities seamlessly with our distributed resilient cloud architecture.",
+        title: "Nearby Care Radar",
+        description: "Instantly locate the best hospitals, clinics, and pharmacies near you with real-time availability and ratings.",
         delay: 0.5
     },
     {
         icon: Cpu,
-        title: "Edge Computing",
-        description: "Process life-critical AI inferences locally on devices for uninterrupted operation even during critical network outages.",
+        title: "Vision Decoder",
+        description: "Advanced AI analysis of X-rays, MRIs, and medication packaging for instant medical insights.",
         delay: 0.6
     }
 ];

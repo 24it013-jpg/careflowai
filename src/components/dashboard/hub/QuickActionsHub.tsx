@@ -4,7 +4,6 @@ import { Sparkles, Scan, Upload, Mic, Send, Pill, Check, X, Zap, Activity, Plus 
 import { useAIChat } from "@/hooks/use-ai-chat";
 import { useHealthData } from "@/hooks/use-health-data";
 import { cn } from "@/lib/utils";
-import { VitalsModal } from "./vitals-modal";
 
 const QUICK_PROMPTS = [
     "What's my heart rate trend?",
@@ -238,26 +237,6 @@ export function QuickActionsHub() {
                         />
                     </div>
                 </motion.div>
-
-                {/* Log Vitals Action */}
-                <VitalsModal>
-                    <motion.button
-                        className="w-full bg-white/[0.03] hover:bg-white/[0.05] border border-white/10 rounded-3xl p-4 flex items-center gap-4 group transition-all"
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                    >
-                        <div className="size-12 rounded-2xl bg-rose-500/20 border border-rose-500/20 flex items-center justify-center group-hover:shadow-[0_0_16px_rgba(244,63,94,0.2)] transition-all">
-                            <Activity className="size-6 text-rose-500" />
-                        </div>
-                        <div className="text-left flex-1">
-                            <h3 className="font-bold text-white text-sm">Log Vitals</h3>
-                            <p className="text-[11px] text-white/40">Record HR, BP, SpO2 for XP</p>
-                        </div>
-                        <div className="size-8 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white/10 transition-colors">
-                            <Plus className="size-4 text-white/40" />
-                        </div>
-                    </motion.button>
-                </VitalsModal>
             </div>
         </div>
     );

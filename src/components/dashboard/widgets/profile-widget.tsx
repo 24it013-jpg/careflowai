@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Users, ShieldCheck } from "lucide-react";
+import { User, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function ProfileWidget() {
@@ -31,7 +31,7 @@ export function ProfileWidget() {
                     </div>
                 </div>
                 <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white hover:bg-white/5">
-                    <Users className="size-5" />
+                    <User className="size-5" />
                 </Button>
             </div>
 
@@ -48,7 +48,7 @@ export function ProfileWidget() {
                     <p className="text-xs text-slate-400 mb-1">Plan</p>
                     <div className="flex items-center gap-2 mt-1">
                         <ShieldCheck className="size-5 text-indigo-400" />
-                        <span className="text-sm font-medium text-white">Family Pro</span>
+                        <span className="text-sm font-medium text-white">Elite Pro</span>
                     </div>
                 </div>
             </div>

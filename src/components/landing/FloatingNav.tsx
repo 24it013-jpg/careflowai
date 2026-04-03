@@ -1,6 +1,6 @@
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Heart, Menu, X } from "lucide-react";
+import { HeartPulse, Menu, X } from "lucide-react";
 import { useState } from "react";
 
 const navLinks = [
@@ -42,9 +42,12 @@ export function FloatingNav() {
                 <Link to="/" className="flex items-center gap-3 group relative">
                     <div className="absolute inset-0 bg-blue-500/20 rounded-lg blur-xl group-hover:bg-blue-400/40 transition-all duration-500" />
                     <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center shadow-[0_0_20px_rgba(59,130,246,0.6)] group-hover:shadow-[0_0_30px_rgba(59,130,246,0.8)] transition-all relative z-10">
-                        <Heart className="w-4 h-4 text-white fill-white" />
+                        <HeartPulse className="w-4 h-4 text-white" />
                     </div>
-                    <span className="text-lg font-bold text-white tracking-tight">CAREflow</span>
+                    <span className="text-lg font-bold tracking-tight">
+                        <span className="text-blue-500 uppercase">CARE</span>
+                        <span className="text-white uppercase">FLOW AI</span>
+                    </span>
                 </Link>
 
                 {/* Desktop Links */}

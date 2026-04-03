@@ -71,6 +71,9 @@ export default function MoodJournal() {
                 <div>
                     <h1 className="text-2xl font-black text-white">Mood Journal</h1>
                     <p className="text-sm text-white/40">Daily emotional tracking · AI pattern analysis</p>
+                    <p className="text-white/50 text-sm font-light max-w-2xl leading-relaxed mt-2">
+                        Reflect on your emotions and track your mood daily. Our AI analyzes patterns to provide insights into how your lifestyle affects your well-being.
+                    </p>
                 </div>
             </motion.div>
 

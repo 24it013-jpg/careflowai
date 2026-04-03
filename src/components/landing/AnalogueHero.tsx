@@ -1,13 +1,20 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Play, ChevronDown, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
+import { ShaderAnimation } from "@/components/ui/shader-animation";
 
 export function AnalogueHero() {
     return (
         <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden z-10 pt-20">
+            {/* Shader Animation Background */}
+            <div className="absolute inset-0 z-0 opacity-40">
+                <ShaderAnimation />
+                <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
+            </div>
+
             {/* Ambient Base Glows */}
-            <div className="absolute top-1/3 left-1/4 w-96 h-96 bg-blue-900/20 rounded-full blur-[150px] pointer-events-none" />
-            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-900/20 rounded-full blur-[150px] pointer-events-none" />
+            <div className="absolute top-1/3 left-1/4 w-96 h-96 bg-blue-900/20 rounded-full blur-[150px] pointer-events-none z-0" />
+            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-900/20 rounded-full blur-[150px] pointer-events-none z-0" />
 
             <div className="container px-4 md:px-6 text-center select-none relative z-10">
                 {/* Badge */}

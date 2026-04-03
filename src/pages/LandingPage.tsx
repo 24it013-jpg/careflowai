@@ -1,4 +1,5 @@
 import { WarpBackground } from "@/components/landing/WarpBackground";
+import { ShaderAnimation } from "@/components/ui/shader-animation";
 import { FloatingNav } from "@/components/landing/FloatingNav";
 import { AnalogueHero } from "@/components/landing/AnalogueHero";
 import { HeartPulseSection } from "@/components/landing/HeartPulseSection";
@@ -17,6 +18,9 @@ export default function LandingPage() {
             {/* Hero */}
             <div className="relative">
                 <WarpBackground />
+                <div className="absolute inset-0 z-0 pointer-events-none opacity-30">
+                    <ShaderAnimation />
+                </div>
                 <AnalogueHero />
             </div>
 

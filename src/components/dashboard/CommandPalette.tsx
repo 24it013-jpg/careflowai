@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import {
     Search, Activity, Brain, Shield, Zap, Globe, Cpu,
     Stethoscope, Pill, MapPin, DollarSign, RefreshCw,
-    Map, Users, Calendar, Heart, Watch, Moon, BookOpen,
+    Map, Users, Calendar, Heart, HeartPulse, Watch, Moon, BookOpen,
     FlaskConical, LayoutDashboard, ArrowRight
 } from "lucide-react";
 
@@ -21,26 +21,19 @@ interface CommandItem {
 const ALL_COMMANDS: CommandItem[] = [
     { id: "dashboard", label: "Dashboard", description: "Main overview", icon: LayoutDashboard, path: "/dashboard", category: "Navigation", color: "text-blue-400" },
     { id: "vision", label: "AI Vision Decoder", description: "Analyze medical images with AI", icon: Brain, path: "/dashboard/vision", category: "AI Tools", color: "text-purple-400" },
-    { id: "med-check", label: "AI Med Check", description: "Drug interaction checker", icon: Pill, path: "/dashboard/med-check", category: "AI Tools", color: "text-rose-400" },
+    { id: "med-check", label: "AI Med Check", description: "Medicine photo & label AI", icon: Pill, path: "/dashboard/med-check", category: "AI Tools", color: "text-rose-400" },
+    { id: "open-health", label: "Open Health Hub", description: "Condition education & heart/diabetes check-ins", icon: HeartPulse, path: "/dashboard/open-health", category: "AI Tools", color: "text-sky-400" },
     { id: "scribe", label: "Ambient Scribe", description: "AI-powered clinical notes", icon: BookOpen, path: "/dashboard/scribe", category: "AI Tools", color: "text-amber-400" },
     { id: "specialist", label: "Specialist Match", description: "Find the right specialist", icon: Stethoscope, path: "/dashboard/specialist", category: "Care", color: "text-emerald-400" },
-    { id: "reminders", label: "Smart Reminders", description: "Medication & appointment alerts", icon: Zap, path: "/dashboard/reminders", category: "Care", color: "text-yellow-400" },
     { id: "telemedicine", label: "Telemedicine", description: "Video consultations", icon: Activity, path: "/dashboard/telemedicine", category: "Care", color: "text-cyan-400" },
-    { id: "vault", label: "Health Vault", description: "Unified medical records", icon: Shield, path: "/dashboard/vault", category: "Records", color: "text-blue-400" },
     { id: "nearby", label: "Nearby Care", description: "Find clinics & hospitals", icon: MapPin, path: "/dashboard/nearby", category: "Navigation", color: "text-rose-400" },
-    { id: "ledger", label: "Expense Ledger", description: "Track healthcare costs", icon: DollarSign, path: "/dashboard/ledger", category: "Finance", color: "text-emerald-400" },
     { id: "refills", label: "Refill Predictor", description: "Smart prescription refills", icon: RefreshCw, path: "/dashboard/refills", category: "Care", color: "text-purple-400" },
     { id: "body-map", label: "Body Map", description: "Interactive anatomy explorer", icon: Map, path: "/dashboard/body-map", category: "Tools", color: "text-orange-400" },
-    { id: "family", label: "Family Hub", description: "Manage family health profiles", icon: Users, path: "/dashboard/family", category: "Care", color: "text-pink-400" },
-    { id: "booking", label: "Booking", description: "Schedule appointments", icon: Calendar, path: "/dashboard/booking", category: "Care", color: "text-blue-400" },
     { id: "diet", label: "Diet & Nutrition", description: "Nutrition tracking & plans", icon: Heart, path: "/dashboard/diet", category: "Wellness", color: "text-emerald-400" },
-    { id: "mental-health", label: "Mental Health", description: "Mindfulness & therapy tools", icon: Brain, path: "/dashboard/mental-health", category: "Wellness", color: "text-purple-400" },
     { id: "symptom-checker", label: "Symptom Checker", description: "AI symptom analysis", icon: Stethoscope, path: "/dashboard/symptom-checker", category: "AI Tools", color: "text-rose-400" },
     { id: "medications", label: "Medication Tracker", description: "Track your medications", icon: Pill, path: "/dashboard/medications", category: "Care", color: "text-amber-400" },
-    { id: "wearable", label: "Wearable Simulator", description: "Simulate wearable data", icon: Watch, path: "/dashboard/wearable", category: "Tools", color: "text-cyan-400" },
     { id: "sleep", label: "Sleep Visualizer", description: "Analyze sleep patterns", icon: Moon, path: "/dashboard/sleep", category: "Wellness", color: "text-indigo-400" },
     { id: "mood", label: "Mood Journal", description: "Track emotional wellbeing", icon: BookOpen, path: "/dashboard/mood", category: "Wellness", color: "text-pink-400" },
-    { id: "labs", label: "Lab Results", description: "View lab test results", icon: FlaskConical, path: "/dashboard/labs", category: "Records", color: "text-teal-400" },
     { id: "globe", label: "Global Pulse", description: "Worldwide health trends", icon: Globe, path: "/dashboard", category: "Analytics", color: "text-blue-400" },
     { id: "cpu", label: "Neural Stream", description: "AI processing monitor", icon: Cpu, path: "/dashboard", category: "Analytics", color: "text-purple-400" },
 ];

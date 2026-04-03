@@ -16,7 +16,6 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { VoiceTranscriptionService, TranscriptionResult } from '@/lib/ai/voice-transcription';
 import { useAIChat } from '@/hooks/use-ai-chat';
@@ -87,9 +86,9 @@ export function HealthCompanion() {
     }, [initialMessage, isOpen]);
 
     useEffect(() => {
-        if (scrollRef.current) {
-            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-        }
+        const el = scrollRef.current;
+        if (!el) return;
+        el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
     }, [messages, isLoading, transcript]);
 
     const toggleListening = () => {
@@ -203,7 +202,7 @@ export function HealthCompanion() {
     const clearChat = () => setMessages([]);
 
     return (
-        <div className="fixed bottom-6 right-6 z-[100] flex flex-col items-end gap-4">
+        <div className="fixed bottom-24 right-10 z-[100] flex flex-col items-end gap-4">
             {/* Chat Window */}
             <AnimatePresence>
                 {isOpen && (
@@ -211,10 +210,10 @@ export function HealthCompanion() {
                         initial={{ opacity: 0, y: 20, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                        className="w-[380px] h-[550px] bg-slate-900/90 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl flex flex-col overflow-hidden"
+                        className="flex w-[min(100vw-2rem,440px)] h-[min(680px,calc(100dvh-6rem))] max-h-[calc(100dvh-6rem)] flex-col overflow-hidden bg-slate-900/95 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl"
                     >
                         {/* Header */}
-                        <div className="p-5 border-b border-white/10 bg-white/5 flex items-center justify-between">
+                        <div className="shrink-0 p-4 border-b border-white/10 bg-white/5 flex items-center justify-between">
                             <div className="flex items-center gap-3">
                                 <div className="size-10 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
                                     <Sparkles className="size-5 text-white" />
@@ -247,11 +246,14 @@ export function HealthCompanion() {
                             </div>
                         </div>
 
-                        {/* Chat Area */}
-                        <ScrollArea className="flex-1 px-4 py-6" ref={scrollRef}>
-                            <div className="space-y-6 pb-4">
+                        {/* Chat Area — flex-1 + min-h-0 so this scrolls and the input stays visible */}
+                        <div
+                            ref={scrollRef}
+                            className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 [scrollbar-gutter:stable] scroll-smooth"
+                        >
+                            <div className="space-y-5 pb-2">
                                 {messages.length === 0 && (
-                                    <div className="flex flex-col items-center justify-center h-[300px] text-center space-y-6 px-4">
+                                    <div className="flex flex-col items-center justify-center min-h-[240px] text-center space-y-6 px-2">
                                         <div className="relative">
                                             <div className="absolute inset-0 bg-blue-500/20 blur-2xl rounded-full animate-pulse" />
                                             <div className="relative p-6 bg-white/5 border border-white/10 rounded-full">
@@ -288,11 +290,11 @@ export function HealthCompanion() {
                                             initial={{ opacity: 0, x: message.role === 'user' ? 10 : -10 }}
                                             animate={{ opacity: 1, x: 0 }}
                                             className={cn(
-                                                "flex gap-3",
+                                                "flex w-full min-w-0 gap-3",
                                                 message.role === 'user' ? "flex-row-reverse" : "flex-row"
                                             )}
                                         >
-                                            <Avatar className="size-8 border border-white/10 shrink-0">
+                                            <Avatar className="size-8 border border-white/10 shrink-0 mt-0.5">
                                                 <AvatarFallback className={cn(
                                                     "text-[10px] font-bold",
                                                     message.role === 'user' ? "bg-blue-600 text-white" : "bg-slate-700 text-blue-400"
@@ -301,10 +303,10 @@ export function HealthCompanion() {
                                                 </AvatarFallback>
                                             </Avatar>
                                             <div className={cn(
-                                                "rounded-2xl px-4 py-3 text-sm leading-relaxed max-w-[85%] overflow-hidden",
+                                                "rounded-2xl px-4 py-3 text-[13px] leading-7 min-w-0 break-words shadow-sm",
                                                 message.role === 'user'
-                                                    ? "bg-blue-600 text-white rounded-tr-none shadow-lg shadow-blue-500/10"
-                                                    : "bg-white/10 text-slate-200 border border-white/10 rounded-tl-none markdown-content"
+                                                    ? "max-w-[85%] bg-blue-600 text-white rounded-tr-none shadow-blue-500/10"
+                                                    : "max-w-full flex-1 bg-slate-800/90 text-slate-100 border border-white/10 rounded-tl-none markdown-content"
                                             )}>
                                                 {message.role === 'user' ? (
                                                     message.content
@@ -319,7 +321,7 @@ export function HealthCompanion() {
                                 </AnimatePresence>
 
                                 {isLoading && (
-                                    <div className="flex gap-3">
+                                    <div className="flex min-w-0 gap-3">
                                         <Avatar className="size-8 border border-white/10 shrink-0">
                                             <AvatarFallback className="bg-slate-700 text-blue-400">
                                                 <Loader2 className="size-4 animate-spin" />
@@ -344,18 +346,43 @@ export function HealthCompanion() {
                                     </div>
                                 )}
                             </div>
-                        </ScrollArea>
+                        </div>
+
+                        {/* Follow-up suggestions — always reachably above the composer */}
+                        {messages.length > 0 && (
+                            <div className="shrink-0 border-t border-white/10 bg-slate-950/80 px-3 py-2">
+                                <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500 mb-1.5 px-1">
+                                    Ask next
+                                </p>
+                                <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 [scrollbar-width:thin]">
+                                    {QUICK_ACTIONS.map((action, idx) => (
+                                        <Button
+                                            key={idx}
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            disabled={isLoading || isListening}
+                                            className="shrink-0 h-8 rounded-full border-white/15 bg-white/5 text-xs text-slate-200 hover:bg-white/10 hover:border-blue-500/40"
+                                            onClick={() => handleSubmit(undefined, action.label)}
+                                        >
+                                            <action.icon className="size-3.5 text-blue-400" />
+                                            {action.label}
+                                        </Button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
 
                         {/* Input Area */}
-                        <div className="p-5 border-t border-white/10 bg-white/5">
-                            <form onSubmit={handleSubmit} className="flex items-center gap-3">
-                                <div className="flex-1 relative group">
+                        <div className="shrink-0 p-4 pt-3 border-t border-white/10 bg-slate-900/90">
+                            <form onSubmit={handleSubmit} className="flex items-end gap-2">
+                                <div className="flex-1 min-w-0 relative group">
                                     <Input
-                                        placeholder={isListening ? "Listening..." : "Ask your health context..."}
+                                        placeholder={isListening ? "Listening…" : "Type a follow-up question…"}
                                         value={input}
                                         onChange={(e) => setInput(e.target.value)}
                                         disabled={isLoading || isListening}
-                                        className="w-full bg-white/5 border-white/10 focus-visible:ring-blue-500/50 rounded-2xl h-12 pr-12 text-slate-100 placeholder:text-slate-500"
+                                        className="w-full bg-white/5 border-white/10 focus-visible:ring-blue-500/50 rounded-2xl min-h-12 py-3 pr-12 text-slate-100 placeholder:text-slate-500"
                                     />
                                     <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
                                         <Button
@@ -376,7 +403,7 @@ export function HealthCompanion() {
                                     type="submit"
                                     size="icon"
                                     disabled={isLoading || !input.trim() || isListening}
-                                    className="size-12 bg-gradient-to-br from-blue-500 to-indigo-600 text-white hover:opacity-90 rounded-2xl shadow-lg shadow-blue-500/20 shrink-0"
+                                    className="size-12 shrink-0 bg-gradient-to-br from-blue-500 to-indigo-600 text-white hover:opacity-90 rounded-2xl shadow-lg shadow-blue-500/20"
                                 >
                                     {isLoading ? <Loader2 className="size-5 animate-spin" /> : <Send className="size-5" />}
                                 </Button>

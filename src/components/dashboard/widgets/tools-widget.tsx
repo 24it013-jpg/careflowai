@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 // Filter to just the "App" style tools
 const TOOLS = FEATURES.filter(f =>
-    ["vision-decoder", "med-check", "scribe", "care-locator", "telemedicine", "refill-predictor"].includes(f.id)
+    ["vision-decoder", "med-check", "open-health", "scribe", "care-locator", "telemedicine", "refill-predictor"].includes(f.id)
 );
 
 export function ToolsWidget() {

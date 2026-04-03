@@ -16,7 +16,7 @@ const AI_RESPONSES: Record<string, string> = {
     sleep: "Your sleep score last night was 82/100. You achieved 1.8 hours of deep sleep, which is above the community average of 1.4h. Your REM cycles were consistent — a great sign for cognitive recovery.",
     stress: "Your stress resilience score is 65/100 — 12% above the Hive average. The breathing sessions in the Resilience Center are clearly working. I recommend a 5-minute session before your 3 PM meeting.",
     diet: "Based on your activity level and metabolic data, I estimate you need approximately 2,400 calories today. Prioritize protein (150g+) to support your current fitness goals.",
-    medication: "Your medication adherence this week is 86%. You missed Vitamin D3 on Tuesday afternoon. I've set a gentle reminder for today at 1 PM.",
+    medication: "Your medication adherence this week is 86%. You missed Vitamin D3 on Tuesday afternoon. Maintaining a consistent schedule is key for optimal results.",
     exercise: "Your VO2 Max estimate is 42 ml/kg/min — above average for your age group. A 30-minute cardio session today would push your weekly score to 91, your personal best!",
     forecast: "The Oracle predicts your health score will reach 91 by Monday — a 15-point improvement from today. The key driver is your improving sleep consistency over the past 5 days.",
 };

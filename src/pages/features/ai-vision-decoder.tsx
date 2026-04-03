@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Upload, ScanLine, CheckCircle2, X, Loader2, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { Upload, ScanLine, CheckCircle2, X, Loader2, TrendingUp, TrendingDown, Minus, Info, AlertCircle, FileText, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
@@ -9,6 +9,7 @@ import {
     type ImageAnalysisResult,
     type TrendAnalysis
 } from "@/lib/ai/vision-decoder";
+import { AIResponseCard } from "@/components/ui/ai-response-card";
 
 export default function AIVisionDecoder() {
     const [status, setStatus] = useState<"idle" | "uploading" | "scanning" | "analyzing" | "result">("idle");
@@ -17,19 +18,33 @@ export default function AIVisionDecoder() {
     const [analysisResults, setAnalysisResults] = useState<ImageAnalysisResult[]>([]);
     const [trends, setTrends] = useState<TrendAnalysis[]>([]);
     const [error, setError] = useState<string | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
-
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
             const files = Array.from(e.target.files);
             setSelectedFiles(files);
-            setPreviewUrls(files.map(file => URL.createObjectURL(file)));
+            
+            // Generate Data URLs for both preview AND AI processing
+            const dataUrls = await Promise.all(
+                files.map(file => new Promise<string>((resolve) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result as string);
+                    reader.readAsDataURL(file);
+                }))
+            );
+            
+            setPreviewUrls(dataUrls);
             setStatus("uploading");
             setError(null);
 
-            // Simulate upload
-            setTimeout(() => setStatus("scanning"), 1500);
+            // Simulate fast secure upload
+            setTimeout(() => setStatus("scanning"), 800);
         }
+    };
+
+    const triggerUpload = () => {
+        fileInputRef.current?.click();
     };
 
     const startAnalysis = async () => {
@@ -85,7 +100,9 @@ export default function AIVisionDecoder() {
                             </motion.span>
                             AI Vision Decoder
                         </h1>
-                        <p className="text-slate-400 mt-2">Upload medical imaging (X-ray, MRI, CT) for instant AI analysis.</p>
+                        <p className="text-white/50 text-lg font-light max-w-2xl leading-relaxed mt-4">
+                            AI Vision Decoder can read your X-ray and provide you a report of your X-ray, providing insights into your health.
+                        </p>
                     </div>
                 </header>
 
@@ -120,12 +137,16 @@ export default function AIVisionDecoder() {
                                 <div className="relative">
                                     <input
                                         type="file"
-                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                        ref={fileInputRef}
+                                        className="hidden"
                                         onChange={handleFileChange}
                                         accept="image/*"
                                         multiple
                                     />
-                                    <Button className="premium-button bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white px-8 h-12 rounded-full border border-white/10 shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] text-md font-medium">
+                                    <Button 
+                                        onClick={triggerUpload}
+                                        className="premium-button bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white px-8 h-12 rounded-full border border-white/10 shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] text-md font-medium"
+                                    >
                                         Upload Scan(s)
                                     </Button>
                                 </div>
@@ -135,18 +156,27 @@ export default function AIVisionDecoder() {
 
                         {/* PREVIEW & SCANNING STATE */}
                         {previewUrls.length > 0 && (
-                            <div className="relative w-full h-full flex items-center justify-center bg-black/50 gap-4 p-4">
+                            <div className="relative w-full h-full flex flex-wrap items-center justify-center bg-black/50 gap-4 p-8 overflow-y-auto">
                                 {previewUrls.map((url, idx) => (
-                                    <img
+                                    <motion.div 
                                         key={idx}
-                                        src={url}
-                                        alt={`Medical Scan ${idx + 1} `}
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
                                         className={cn(
-                                            "max-w-full max-h-full object-contain",
-                                            status === "result" ? "opacity-50" : "opacity-80",
-                                            previewUrls.length > 1 ? "w-1/2" : "w-full"
+                                            "relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl",
+                                            previewUrls.length === 1 ? "w-full max-w-2xl h-[450px]" : "w-[calc(50%-1rem)] h-[250px]"
                                         )}
-                                    />
+                                    >
+                                        <img
+                                            src={url}
+                                            alt={`Medical Scan ${idx + 1}`}
+                                            className="w-full h-full object-cover"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+                                        <div className="absolute bottom-3 left-3 px-2 py-1 bg-black/40 backdrop-blur-md rounded text-[10px] text-white/70 border border-white/10 uppercase tracking-widest">
+                                            Scan #{idx + 1}
+                                        </div>
+                                    </motion.div>
                                 ))}
 
                                 {/* Scanning Beam Animation */}
@@ -157,47 +187,29 @@ export default function AIVisionDecoder() {
                                         animate={{ opacity: 1 }}
                                     >
                                         <motion.div
-                                            className="w-full h-2 bg-purple-500 shadow-[0_0_50px_theme(colors.purple.500)]"
+                                            className="w-full h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent shadow-[0_0_30px_rgba(168,85,247,0.8)]"
                                             animate={{ top: ["0%", "100%", "0%"] }}
-                                            transition={{ duration: 3, ease: "linear", repeat: Infinity }}
+                                            transition={{ duration: 4, ease: "linear", repeat: Infinity }}
                                             style={{ position: "absolute" }}
                                         />
-                                        <div className="absolute inset-0 bg-purple-500/10 mix-blend-overlay" />
-
-                                        {/* Grid Overlay */}
-                                        <div className="absolute inset-0 bg-[linear-gradient(rgba(168,85,247,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(168,85,247,0.1)_1px,transparent_1px)] bg-[size:40px_40px]" />
+                                        <div className="absolute inset-0 bg-purple-500/5 mix-blend-overlay" />
+                                        
+                                        {/* Digital HUD Elements */}
+                                        <div className="absolute top-4 left-4 flex gap-2">
+                                            <div className="size-2 bg-purple-500 rounded-full animate-pulse" />
+                                            <div className="text-[10px] text-purple-400 font-mono tracking-tighter">SCANNING_TISSUE_DENSITY...</div>
+                                        </div>
                                     </motion.div>
                                 )}
 
                                 {/* Cancel Button */}
-                                {status !== "result" && (
+                                {status !== "result" && status !== "analyzing" && (
                                     <button
                                         onClick={reset}
-                                        className="absolute top-4 right-4 p-2 bg-black/50 hover:bg-red-500/20 text-slate-400 hover:text-red-500 rounded-full transition-colors z-30 border border-white/10"
+                                        className="absolute top-4 right-4 p-2 bg-black/50 hover:bg-red-500/20 text-slate-400 hover:text-red-500 rounded-full transition-colors z-30 border border-white/10 backdrop-blur-md"
                                     >
-                                        <X className="size-6" />
+                                        <X className="size-5" />
                                     </button>
-                                )}
-
-                                {/* Annotations / Results Overlay */}
-                                {status === "result" && (
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        className="absolute inset-0 z-30 pointer-events-none"
-                                    >
-                                        {/* Mock Detected Region */}
-                                        <motion.div
-                                            initial={{ scale: 1.5, opacity: 0 }}
-                                            animate={{ scale: 1, opacity: 1 }}
-                                            transition={{ delay: 0.5 }}
-                                            className="absolute top-[30%] left-[40%] w-[100px] h-[100px] border-2 border-red-500 rounded-full shadow-[0_0_20px_theme(colors.red.500)] bg-red-500/10 flex items-center justify-center"
-                                        >
-                                            <div className="bg-red-600 text-white text-xs px-2 py-0.5 rounded absolute -top-6 whitespace-nowrap font-bold">
-                                                Abnormality Detected (94%)
-                                            </div>
-                                        </motion.div>
-                                    </motion.div>
                                 )}
                             </div>
                         )}
@@ -280,102 +292,59 @@ export default function AIVisionDecoder() {
                                 animate={{ opacity: 1, y: 0 }}
                                 className="space-y-6"
                             >
-                                {/* Individual Analysis Results */}
-                                {analysisResults.map((result, idx) => (
-                                    <div key={result.id} className="premium-glass-panel border-white/10 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
-                                        {/* Subtle background glow */}
-                                        <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/10 rounded-full blur-[80px] -z-10" />
-                                        
-                                        <div className="flex items-start justify-between mb-6">
-                                            <div>
-                                                <h2 className="text-2xl font-bold text-white mb-2">
-                                                    Analysis Report {analysisResults.length > 1 ? `#${idx + 1} ` : ''}
-                                                </h2>
-                                                <div className="flex gap-2">
-                                                    <span className="px-3 py-1 bg-green-500/10 text-green-400 rounded-full text-xs font-medium border border-green-500/20 flex items-center gap-1">
-                                                        <CheckCircle2 className="size-3" /> Confidence: {(result.analysis.confidence * 100).toFixed(0)}%
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            {idx === 0 && <Button variant="outline" onClick={reset} className="premium-glass-panel border-white/10 hover:bg-white/10 hover:text-white text-slate-300 transition-all rounded-full px-6">New Scan</Button>}
-                                        </div>
+                                <div className="flex items-center justify-between">
+                                    <Button 
+                                        variant="outline" 
+                                        onClick={reset} 
+                                        className="premium-glass-panel border-white/10 hover:bg-white/10 hover:text-white text-slate-300 transition-all rounded-full px-6 h-10 text-sm"
+                                    >
+                                        New Scan
+                                    </Button>
+                                </div>
 
-                                        <div className="grid md:grid-cols-2 gap-8">
-                                            <div className="space-y-4">
-                                                <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
-                                                    <h4 className="text-sm text-slate-400 uppercase tracking-wider mb-2">Description</h4>
-                                                    <p className="text-lg font-medium text-white">
-                                                        {result.analysis.description}
-                                                    </p>
-                                                </div>
-                                                <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
-                                                    <h4 className="text-sm text-slate-400 uppercase tracking-wider mb-2">Findings</h4>
-                                                    <ul className="space-y-2">
-                                                        {result.analysis.findings.map((finding, i) => (
-                                                            <li key={i} className="text-slate-300 flex items-start gap-2">
-                                                                <span className="text-purple-400 mt-1">•</span>
-                                                                <span>{finding}</span>
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                </div>
-                                            </div>
+                                {analysisResults.map((result, idx) => {
+                                    const markdownContent = `
+# Clinical Analysis Report ${analysisResults.length > 1 ? `#${idx + 1}` : ''}
+Confidence: **${(result.analysis.confidence * 100).toFixed(0)}%**
 
-                                            <div>
-                                                <h4 className="text-sm text-slate-400 uppercase tracking-wider mb-4">Recommendations</h4>
-                                                <div className="space-y-3">
-                                                    {result.analysis.recommendations.map((rec, i) => (
-                                                        <div key={i} className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.1)] flex items-start gap-3">
-                                                            <div className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-2 shrink-0 shadow-[0_0_5px_rgba(96,165,250,0.8)]" />
-                                                            <span className="text-slate-200 leading-relaxed">{rec}</span>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
+## Primary Description
+${result.analysis.description}
+
+## Key Clinical Findings
+${result.analysis.findings.map(finding => `- ${finding}`).join('\n')}
+
+## Clinical Recommendations
+${result.analysis.recommendations.map(rec => `- ${rec}`).join('\n')}
+                                    `;
+
+                                    return (
+                                        <AIResponseCard 
+                                            key={result.id}
+                                            content={markdownContent}
+                                            title={`Clinical Report ${analysisResults.length > 1 ? `#${idx + 1}` : ''}`}
+                                            source="AI Vision Decoder"
+                                        />
+                                    );
+                                })}
 
                                 {/* Trend Analysis */}
                                 {trends.length > 0 && (
-                                    <div className="premium-glass-panel border border-white/10 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
-                                        <div className="absolute -top-20 -left-20 w-64 h-64 bg-blue-500/10 rounded-full blur-[80px] -z-10" />
-                                        <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                                            <TrendingUp className="size-6 text-purple-400" />
-                                            Trend Analysis
-                                        </h2>
-                                        <div className="grid md:grid-cols-2 gap-6">
-                                            {trends.map((trend, idx) => (
-                                                <div key={idx} className="p-4 bg-white/5 rounded-2xl border border-white/10">
-                                                    <div className="flex items-center justify-between mb-3">
-                                                        <h4 className="text-sm text-slate-400 uppercase tracking-wider">{trend.metric}</h4>
-                                                        <div className="flex items-center gap-1">
-                                                            {trend.trend === 'improving' && <TrendingUp className="size-4 text-green-400" />}
-                                                            {trend.trend === 'worsening' && <TrendingDown className="size-4 text-red-400" />}
-                                                            {trend.trend === 'stable' && <Minus className="size-4 text-blue-400" />}
-                                                            <span className={cn(
-                                                                "text-xs font-medium",
-                                                                trend.trend === 'improving' && "text-green-400",
-                                                                trend.trend === 'worsening' && "text-red-400",
-                                                                trend.trend === 'stable' && "text-blue-400"
-                                                            )}>
-                                                                {trend.trend}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                    <p className="text-sm text-slate-500 mb-3">{trend.timeframe}</p>
-                                                    <ul className="space-y-2">
-                                                        {trend.insights.map((insight, i) => (
-                                                            <li key={i} className="text-sm text-slate-300 flex items-start gap-2">
-                                                                <span className="text-purple-400 mt-0.5">•</span>
-                                                                <span>{insight}</span>
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
+                                    <AIResponseCard 
+                                        title="Long-term Trend Analysis"
+                                        source="Neural Intelligence Engine"
+                                        content={`
+# Multi-Scan Trend Insights
+The following trends were detected across your uploaded scans.
+
+${trends.map(trend => `
+### ${trend.metric}
+- **Trend:** ${trend.trend.toUpperCase()}
+- **Timeframe:** ${trend.timeframe}
+- **Insights:**
+${trend.insights.map(insight => `  - ${insight}`).join('\n')}
+`).join('\n')}
+                                        `}
+                                    />
                                 )}
                             </motion.div>
                         )}

@@ -10,17 +10,24 @@ import { useAIProctor } from "@/hooks/use-ai-proctor";
 import { CommandCenter } from "@/components/dashboard/command/command-center";
 
 import { WarpBackground } from "@/components/landing/WarpBackground";
-import { AIHealthChat } from "@/components/dashboard/hub/AIHealthChat";
+import { ShaderAnimation } from "@/components/ui/shader-animation";
 import { KeyboardShortcutsPanel } from "@/components/dashboard/hub/KeyboardShortcuts";
 import { PageTransition } from "@/components/ui/page-transition";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { BackToTop } from "@/components/ui/BackToTop";
 import { CommandPalette } from "@/components/dashboard/CommandPalette";
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { NeuralLoadingScreen } from "@/components/ui/NeuralLoadingScreen";
+import { useSidebarStore } from "@/hooks/use-sidebar-store";
+import { cn } from "@/lib/utils";
 
 export default function DashboardLayout({ children }: { children?: React.ReactNode }) {
     useAIProctor();
     const [cmdOpen, setCmdOpen] = useState(false);
+    const [isPageLoading, setIsPageLoading] = useState(false);
+    const location = useLocation();
+    const { isOpen: isSidebarOpen } = useSidebarStore();
 
     // Global Cmd+K / Ctrl+K shortcut to open command palette
     useEffect(() => {
@@ -34,10 +41,27 @@ export default function DashboardLayout({ children }: { children?: React.ReactNo
         return () => window.removeEventListener("keydown", handler);
     }, []);
 
+    // Handle page loading state on route change
+    useEffect(() => {
+        setIsPageLoading(true);
+        const timer = setTimeout(() => {
+            setIsPageLoading(false);
+        }, 800); // Artificial delay for smooth transition
+
+        return () => clearTimeout(timer);
+    }, [location.pathname]);
+
     return (
         <div className="min-h-screen w-full bg-black relative overflow-hidden font-sans text-white selection:bg-blue-500/30">
-            {/* Warp Speed Background */}
-            <WarpBackground />
+            {/* Page Loading Overlay */}
+            <AnimatePresence>
+                {isPageLoading && <NeuralLoadingScreen />}
+            </AnimatePresence>
+
+            {/* Global Shader Background Overlay */}
+            <div className="fixed inset-0 z-0 pointer-events-none opacity-20">
+                <ShaderAnimation />
+            </div>
 
             {/* Navigation */}
             <TopNav />
@@ -49,11 +73,8 @@ export default function DashboardLayout({ children }: { children?: React.ReactNo
             {/* SOS Overlay */}
             <EmergencyButton />
             <OfflineIndicator />
-            <Toaster position="bottom-right" expand={false} richColors />
+            <Toaster position="top-right" expand={false} richColors />
             <CommandCenter />
-
-            {/* AI Health Chat Widget */}
-            <AIHealthChat />
 
             {/* Keyboard Shortcuts */}
             <KeyboardShortcutsPanel />
@@ -64,13 +85,21 @@ export default function DashboardLayout({ children }: { children?: React.ReactNo
             {/* Back to Top */}
             <BackToTop />
 
-            <main className="relative pt-20 pb-0 px-0 max-w-[1800px] mx-auto h-screen overflow-y-auto flex flex-col scrollbar-premium">
+            <motion.main 
+                animate={{ 
+                    paddingLeft: isSidebarOpen ? "5.5rem" : "0rem"
+                }}
+                transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+                className={cn(
+                    "relative pt-20 pb-0 px-0 max-w-[1800px] mx-auto h-screen overflow-y-auto flex flex-col scrollbar-premium",
+                )}
+            >
                 <AnimatePresence mode="wait">
                     <PageTransition>
                         {children || <Outlet />}
                     </PageTransition>
                 </AnimatePresence>
-            </main>
+            </motion.main>
         </div>
     );
 }

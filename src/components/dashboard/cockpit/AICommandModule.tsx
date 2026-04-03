@@ -54,7 +54,7 @@ export function AICommandModule() {
 
             {/* Quick Suggestions */}
             <div className="mt-6 flex flex-wrap gap-2 relative z-10">
-                {["Check potential interactions", "Analyze visible symptoms", "Summarize recent labs"].map((suggestion, i) => (
+                {["Check potential interactions", "Analyze visible symptoms", "Analyze health trends"].map((suggestion, i) => (
                     <button
                         key={i}
                         className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-slate-400 hover:text-white transition-all whitespace-nowrap"

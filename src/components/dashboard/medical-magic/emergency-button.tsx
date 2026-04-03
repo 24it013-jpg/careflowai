@@ -52,7 +52,7 @@ export function EmergencyButton() {
                 layoutId="emergency-trigger"
                 onClick={handleActivate}
                 className={cn(
-                    "fixed bottom-8 right-8 z-50 group flex items-center justify-center size-16 rounded-full shadow-lg transition-all duration-300 border-4 border-[#121212]",
+                    "fixed bottom-10 left-10 z-50 group flex items-center justify-center size-16 rounded-full shadow-lg transition-all duration-300 border-4 border-[#121212]",
                     isSOSActive || isCountdownActive ? "bg-red-900 border-red-500 scale-125" : "bg-red-600 hover:scale-110 shadow-[0_0_40px_-5px_theme(colors.red.600)]"
                 )}
             >
@@ -179,7 +179,7 @@ export function EmergencyButton() {
                         <div className="mt-12 text-center max-w-2xl px-6">
                             <p className="text-slate-500 text-sm italic">
                                 responder instructions: this patient has identified you as a primary caregiver or responder.
-                                the above information is synchronized with their health vault.
+                                the above information is synchronized with their medical records.
                             </p>
                         </div>
                     </motion.div>

@@ -85,9 +85,8 @@ export default function VoiceAgent() {
 
                             <div className="space-y-4">
                                 <h2 className="text-3xl font-bold text-white tracking-tight">Your Health Companion is Online</h2>
-                                <p className="text-slate-400 leading-relaxed">
-                                    Experience a natural, fluid conversation with your personalized medical assistant. 
-                                    Ask about symptoms, monitor vitals, or request health summaries via voice.
+                                <p className="text-white/50 text-lg font-light leading-relaxed">
+                                    Experience a natural, fluid conversation with your personalized medical assistant. Ask about symptoms, monitor vitals, or request health summaries via voice in real-time.
                                 </p>
                             </div>
 

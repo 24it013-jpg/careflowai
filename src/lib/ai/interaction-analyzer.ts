@@ -1,10 +1,10 @@
 /**
  * AI Interaction Analyzer
- * Uses OpenAI GPT-4 to generate plain-language interaction summaries
+ * Uses the same text stack as the app: OpenRouter (primary → backup → tertiary), then Gemini.
  */
 
 import { DrugInteraction } from './medication-checker';
-import { callGemini } from './gemini';
+import { callAI } from './gemini';
 
 export interface AIInteractionSummary {
     plainLanguageSummary: string;
@@ -36,10 +36,10 @@ export type SupplementInteraction = FoodInteraction;
 export async function generateInteractionSummary(
     interaction: DrugInteraction
 ): Promise<AIInteractionSummary> {
-    const geminiKey = import.meta.env.VITE_GEMINI_API_KEY;
- 
-    if (!geminiKey) {
-        // Fallback to basic summary if no API key
+    const hasAi =
+        Boolean(import.meta.env.VITE_OPENROUTER_API_KEY) || Boolean(import.meta.env.VITE_GEMINI_API_KEY);
+
+    if (!hasAi) {
         return generateBasicSummary(interaction);
     }
 
@@ -62,9 +62,8 @@ Generate a response in JSON format with:
 Return only the JSON object. 
 Focus on being reassuring but honest. Use simple language. Avoid medical jargon.`;
 
-        const resultText = await callGemini(prompt, undefined, [], {
-            responseMimeType: 'application/json',
-            temperature: 0.3
+        const resultText = await callAI(prompt, undefined, [], {
+            temperature: 0.3,
         });
 
         const content = JSON.parse(resultText);

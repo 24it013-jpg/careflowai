@@ -949,7 +949,7 @@ export default function AnatomyAR() {
         } catch (err: any) {
             const errorMessage = err?.message || "Camera access denied. Please allow camera permissions.";
             setError(errorMessage);
-            console.error("AR Camera Error:", err);
+            console.warn(`AR Camera Warning: ${errorMessage}`);
         } finally {
             setLoading(false);
         }
@@ -1070,46 +1070,28 @@ export default function AnatomyAR() {
 
     // ── Render ─────────────────────────────────────────────────────────────────
     return (
-        <div className="min-h-screen bg-[#010912] text-white overflow-hidden flex flex-col">
-            {/* Header */}
-            <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-4 pt-4 pb-2 bg-gradient-to-b from-black/80 to-transparent">
-                <div className="flex items-center gap-3">
-                    <div className="size-10 rounded-2xl bg-gradient-to-br from-cyan-500/30 to-blue-500/20 border border-cyan-500/30 flex items-center justify-center">
-                        <Scan className="size-5 text-cyan-400" />
-                    </div>
-                    <div>
-                        <h1 className="text-sm font-black text-white tracking-wide">AR Anatomy Scanner</h1>
-                        <p className="text-[10px] text-white/40 font-medium">Holistic Biometric · 543+ Landmarks · Real-Time</p>
+        <div className="h-[calc(100vh-5rem)] bg-[#010912] text-white overflow-hidden flex flex-col relative">
+            {/* HUD Status Bar (Top) */}
+            <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-6 py-4 bg-gradient-to-b from-black/60 to-transparent pointer-events-none">
+                <div className="flex items-center gap-4">
+                    <div className="flex flex-col">
+                        <h1 className="text-xl font-black text-white uppercase tracking-widest">Anatomy AR</h1>
+                        <p className="text-[10px] text-white/40 uppercase tracking-[0.3em]">Augmented Reality Interface</p>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                    {/* FPS Badge */}
+                <div className="flex items-center gap-4 max-w-xl mx-auto hidden md:block">
+                    <p className="text-white/50 text-xs font-light leading-relaxed text-center">
+                        Explore human anatomy in real-time. Use your camera to overlay bones, muscles, and organs, gaining interactive insights into your body's structure.
+                    </p>
+                </div>
+
+                <div className="flex items-center gap-3 pointer-events-auto">
                     {cameraActive && (
-                        <div className="px-2 py-1 rounded-lg bg-black/50 border border-white/10 text-[10px] font-mono text-emerald-400">
-                            {fps} FPS
+                        <div className="px-3 py-1.5 rounded-xl bg-black/40 border border-white/5 backdrop-blur-md text-[10px] font-mono text-cyan-400 tracking-tighter">
+                            SYSTEM_FPS: {fps}
                         </div>
                     )}
-                    {/* Hand detected badge */}
-                    <AnimatePresence>
-                        {handDetected && (
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.8 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.8 }}
-                                className="px-3 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center gap-1.5"
-                            >
-                                <motion.div
-                                    className="size-1.5 rounded-full bg-emerald-400"
-                                    animate={{ opacity: [1, 0.3, 1] }}
-                                    transition={{ duration: 1, repeat: Infinity }}
-                                />
-                                <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">
-                                    {regionsDetected.head ? "Cranial" : regionsDetected.arm ? "Brachial" : "Biometric"} Tracking Active
-                                </span>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
                 </div>
             </div>
 
@@ -1121,7 +1103,7 @@ export default function AnatomyAR() {
                     ref={canvasRef}
                     onClick={handleCanvasClick}
                     className={cn(
-                        "w-full h-full max-h-screen object-cover cursor-crosshair transition-opacity duration-300",
+                        "w-full h-full max-h-full object-cover cursor-crosshair transition-opacity duration-300",
                         cameraActive ? "opacity-100" : "opacity-0"
                     )}
                     style={{ aspectRatio: "16/9" }}

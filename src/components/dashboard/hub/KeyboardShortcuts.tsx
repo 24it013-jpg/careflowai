@@ -8,7 +8,6 @@ const SHORTCUT_GROUPS = [
         title: "Navigation",
         shortcuts: [
             { keys: ["H"], description: "Dashboard Home" },
-            { keys: ["V"], description: "Vitals Monitor" },
             { keys: ["M"], description: "Medications" },
             { keys: ["S"], description: "Symptom Checker" },
             { keys: ["T"], description: "Telemedicine" },
@@ -18,16 +17,13 @@ const SHORTCUT_GROUPS = [
         title: "Arena",
         shortcuts: [
             { keys: ["A"], description: "Achievements" },
-            { keys: ["L"], description: "Leaderboard" },
             { keys: ["Q"], description: "Daily Quests" },
         ]
     },
     {
         title: "Health Tools",
         shortcuts: [
-            { keys: ["W"], description: "Wearable Simulator" },
             { keys: ["J"], description: "Mood Journal" },
-            { keys: ["R"], description: "Lab Results" },
             { keys: ["P"], description: "Sleep Visualizer" },
         ]
     },
@@ -65,7 +61,7 @@ export function KeyboardShortcutsPanel() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 onClick={() => setIsOpen(true)}
-                className="fixed bottom-6 left-6 z-40 flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white/30 hover:text-white hover:bg-white/10 transition-all text-xs font-bold"
+                className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white/30 hover:text-white hover:bg-white/10 transition-all text-xs font-bold shadow-lg shadow-black/20"
                 title="Keyboard shortcuts (?)"
             >
                 <Keyboard className="size-3.5" />

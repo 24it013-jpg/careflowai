@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Brain, Send, AlertTriangle, CheckCircle, Stethoscope, Sparkles, User, ShieldCheck } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { AIResponseCard } from "@/components/ui/ai-response-card";
 
 interface Message {
     id: string;
@@ -101,13 +102,19 @@ export default function SymptomChecker() {
                         <Brain className="size-7 text-white" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-black text-white tracking-tight">Oracle Diagnostics</h1>
-                        <p className="text-xs text-white/40 font-bold uppercase tracking-[0.2em]">Neural Symptom Synthesis v4.2</p>
+                        <h1 className="text-4xl font-black text-white tracking-tighter uppercase">Symptom Checker</h1>
+                        <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em]">AI-Powered Diagnostic Analysis</p>
                     </div>
                     <div className="ml-auto flex items-center gap-3 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl">
                         <div className="size-2 rounded-full bg-emerald-500 animate-pulse" />
                         <span className="text-[10px] font-black text-white/60 uppercase tracking-widest">Core Status: Optimal</span>
                     </div>
+                </motion.div>
+
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+                    <p className="text-white/50 text-lg font-light max-w-2xl leading-relaxed mt-4 mb-8">
+                        Get instant AI-driven assessments for your symptoms. Our checker provides triage protocols and potential conditions to help you decide on the next steps for your health.
+                    </p>
                 </motion.div>
 
                 {/* Chat Container */}
@@ -133,66 +140,61 @@ export default function SymptomChecker() {
                                         "max-w-[75%] space-y-4",
                                         msg.role === "user" ? "items-end text-right" : "items-start"
                                     )}>
-                                        <div className={cn(
-                                            "inline-block rounded-[2rem] px-6 py-4 border text-[15px] leading-relaxed relative",
-                                            msg.role === "user"
-                                                ? "bg-indigo-500/10 border-indigo-500/20 text-white font-medium"
-                                                : "bg-white/5 border-white/10 text-white/80"
-                                        )}>
-                                            {msg.text}
-                                        </div>
-
-                                        {msg.conditions && (
-                                            <div className="grid grid-cols-1 md:grid-cols-1 gap-4 w-full">
-                                                <div className="p-6 rounded-[2rem] bg-white/[0.03] border border-white/5 space-y-5">
-                                                    <h4 className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] flex items-center gap-2">
-                                                        <ShieldCheck className="size-3" /> Predictive Condition Analysis
-                                                    </h4>
-                                                    <div className="space-y-4">
-                                                        {msg.conditions.map((c, i) => (
-                                                            <div key={i} className="space-y-2">
-                                                                <div className="flex justify-between items-center text-xs">
-                                                                    <span className={cn("font-black tracking-wide", c.color)}>{c.name}</span>
-                                                                    <span className="text-white/40 font-mono italic">{c.confidence}%</span>
+                                        {msg.role === "ai" ? (
+                                            <div className="flex-1 space-y-4">
+                                                <AIResponseCard 
+                                                    content={msg.text}
+                                                    title="Symptom Analysis"
+                                                    source="Diagnostic Engine"
+                                                    compact={true}
+                                                    className="!bg-white/5 !border-white/10 !text-slate-100"
+                                                />
+                                                
+                                                {msg.conditions && (
+                                                    <div className="grid gap-3">
+                                                        {msg.conditions.map((cond, i) => (
+                                                            <motion.div
+                                                                initial={{ opacity: 0, x: -10 }}
+                                                                animate={{ opacity: 1, x: 0 }}
+                                                                transition={{ delay: 0.1 * i }}
+                                                                key={i}
+                                                                className="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between"
+                                                            >
+                                                                <span className="text-sm font-medium">{cond.name}</span>
+                                                                <div className="flex items-center gap-2">
+                                                                    <div className="w-24 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                                                                        <div className="h-full bg-purple-500" style={{ width: `${cond.confidence}%` }} />
+                                                                    </div>
+                                                                    <span className={cn("text-[10px] font-bold w-8", cond.color)}>{cond.confidence}%</span>
                                                                 </div>
-                                                                <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
-                                                                    <motion.div
-                                                                        initial={{ width: 0 }}
-                                                                        animate={{ width: `${c.confidence}%` }}
-                                                                        transition={{ delay: 0.4 + i * 0.1, duration: 0.8, ease: "easeOut" }}
-                                                                        className={cn("h-full rounded-full shadow-[0_0_8px]", c.color.replace('text-', 'bg-'))}
-                                                                        style={{ filter: "brightness(1.2)" }}
-                                                                    />
-                                                                </div>
-                                                            </div>
+                                                            </motion.div>
                                                         ))}
                                                     </div>
-                                                </div>
+                                                )}
 
                                                 {msg.triage && (
-                                                    <motion.div
-                                                        initial={{ opacity: 0, x: -10 }}
-                                                        animate={{ opacity: 1, x: 0 }}
-                                                        transition={{ delay: 0.8 }}
-                                                        className={cn(
-                                                            "p-5 rounded-[1.75rem] border flex items-center gap-4 shadow-xl",
-                                                            TRIAGE_CONFIG[msg.triage].bg
-                                                        )}
-                                                    >
-                                                        <div className={cn("size-10 rounded-xl flex items-center justify-center shrink-0", TRIAGE_CONFIG[msg.triage].color.replace('text-', 'bg-').replace('400', '500/20'))}>
+                                                    <div className={cn(
+                                                        "p-4 rounded-2xl border flex items-center gap-4",
+                                                        TRIAGE_CONFIG[msg.triage].bg
+                                                    )}>
+                                                        <div className={cn("p-2 rounded-xl bg-white/5", TRIAGE_CONFIG[msg.triage].color)}>
                                                             {(() => {
                                                                 const Icon = TRIAGE_CONFIG[msg.triage].icon;
-                                                                return <Icon className={cn("size-5", TRIAGE_CONFIG[msg.triage].color)} />;
+                                                                return <Icon className="size-5" />;
                                                             })()}
                                                         </div>
                                                         <div>
-                                                            <p className="text-[10px] font-black text-white/30 uppercase tracking-widest leading-none mb-1.5">Primary Recommendation</p>
-                                                            <span className={cn("text-sm font-black tracking-tight", TRIAGE_CONFIG[msg.triage].color)}>
+                                                            <p className="text-[10px] uppercase tracking-widest font-bold text-white/40">AI Triage Protocol</p>
+                                                            <p className={cn("text-sm font-bold", TRIAGE_CONFIG[msg.triage].color)}>
                                                                 {TRIAGE_CONFIG[msg.triage].label}
-                                                            </span>
+                                                            </p>
                                                         </div>
-                                                    </motion.div>
+                                                    </div>
                                                 )}
+                                            </div>
+                                        ) : (
+                                            <div className="px-5 py-3 rounded-2xl rounded-tr-none bg-purple-600 text-white text-sm leading-relaxed shadow-lg shadow-purple-500/20">
+                                                {msg.text}
                                             </div>
                                         )}
                                     </div>

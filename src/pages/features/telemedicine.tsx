@@ -115,7 +115,7 @@ export default function Telemedicine() {
                 });
                 toast.success("Call Connected", { description: "Secure encrypted session established" });
             } catch (err: any) {
-                console.error("Camera access denied:", err);
+                console.warn("Camera Warning:", err?.message || err);
                 toast.error("Camera Error", { description: err.message || "Please allow camera access for the consultation." });
                 // Still allow call start for demo purposes even if camera fails
                 setIsCallActive(true);
@@ -187,31 +187,21 @@ export default function Telemedicine() {
             </div>
 
             <div className="max-w-7xl mx-auto relative z-10">
-                {/* Header */}
-                <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8"
-                >
-                    <div>
-                        <h1 className="text-4xl font-light tracking-tight flex items-center gap-3 mb-2 text-white">
-                            <span className="p-2 bg-gradient-to-br from-cyan-500/20 to-blue-500/10 border border-cyan-500/30 rounded-xl text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.25)] backdrop-blur-sm">
-                                <Video className="size-6" />
-                            </span>
-                            TeleHealth Connect
-                        </h1>
-                        <p className="text-white/50 text-lg font-light">Virtual Sub-Specialty Consultations</p>
-                    </div>
-                    <div className="flex items-center gap-4">
-                        <Badge variant="outline" className="px-4 py-2 bg-emerald-500/10 text-emerald-400 border-emerald-500/20 gap-2 font-medium backdrop-blur-sm">
-                            <span className="relative flex h-2 w-2">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                            </span>
-                            System Online
-                        </Badge>
-                    </div>
-                </motion.div>
+                <header className="mb-12">
+                    <motion.h1
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-4xl font-black tracking-tight flex items-center gap-4 text-white mb-4"
+                    >
+                        <span className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-2xl text-rose-400 shadow-lg shadow-rose-500/10">
+                            <Video className="size-8" />
+                        </span>
+                        Telemedicine
+                    </motion.h1>
+                    <p className="text-white/50 text-lg font-light max-w-2xl leading-relaxed">
+                        Connect with top healthcare professionals from the comfort of your home. Experience secure video calls, instant prescriptions, and digital summaries of your consultations.
+                    </p>
+                </header>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-14rem)] min-h-[600px]">
 
@@ -551,7 +541,7 @@ export default function Telemedicine() {
                                         </div>
                                         <div>
                                             <h2 className="text-3xl font-light text-white mb-2">Transaction Complete</h2>
-                                            <p className="text-white/40">Session record and invoice have been sent to your Health Vault.</p>
+                                            <p className="text-white/40">Session record and invoice have been sent to your medical records.</p>
                                         </div>
                                         <Button onClick={() => setShowSummary(false)} className="w-full h-14 rounded-2xl bg-white text-black font-medium text-lg hover:bg-white/90">
                                             Back to Dashboard

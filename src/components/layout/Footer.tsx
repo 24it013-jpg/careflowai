@@ -1,4 +1,4 @@
-import { Github, Twitter, Linkedin, Heart, Mail, ArrowRight } from "lucide-react";
+import { Github, Twitter, Linkedin, HeartPulse, Mail, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 const footerLinks = {
@@ -35,10 +35,11 @@ export function Footer() {
                     <div className="md:col-span-2 space-y-6">
                         <div className="flex items-center gap-3">
                             <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-500 to-cyan-400 flex items-center justify-center shadow-[0_0_20px_rgba(59,130,246,0.5)]">
-                                <Heart className="w-4 h-4 text-white fill-white" />
+                                <HeartPulse className="w-4 h-4 text-white" />
                             </div>
-                            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
-                                CAREflow AI
+                            <span className="text-xl font-bold tracking-tight">
+                                <span className="text-blue-500 uppercase">CARE</span>
+                                <span className="text-white uppercase">FLOW AI</span>
                             </span>
                         </div>
                         <p className="text-gray-400 text-sm leading-relaxed max-w-xs">

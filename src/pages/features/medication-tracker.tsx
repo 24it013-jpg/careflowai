@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Pill, CheckCircle2, XCircle, Clock, AlertTriangle, Flame, Plus, Pencil, Trash2, Bell, BellOff } from "lucide-react";
+import { Pill, CheckCircle2, XCircle, Clock, AlertTriangle, Flame, Plus, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -19,7 +19,6 @@ interface Medication {
     color: string;
     status: MedStatus;
     purpose: string;
-    reminder: boolean;
 }
 
 const SLOT_CONFIG: Record<TimeSlot, { label: string; time: string; icon: string; color: string }> = {
@@ -30,12 +29,12 @@ const SLOT_CONFIG: Record<TimeSlot, { label: string; time: string; icon: string;
 };
 
 const INITIAL_MEDS: Medication[] = [
-    { id: "m1", name: "Lisinopril", dose: "10mg", slot: "morning", color: "from-blue-500 to-cyan-500", status: "taken", purpose: "Blood Pressure", reminder: true },
-    { id: "m2", name: "Metformin", dose: "500mg", slot: "morning", color: "from-purple-500 to-pink-500", status: "taken", purpose: "Blood Sugar", reminder: true },
-    { id: "m3", name: "Vitamin D3", dose: "2000 IU", slot: "afternoon", color: "from-amber-500 to-orange-500", status: "pending", purpose: "Immunity", reminder: false },
-    { id: "m4", name: "Omega-3", dose: "1000mg", slot: "afternoon", color: "from-teal-500 to-emerald-500", status: "pending", purpose: "Heart Health", reminder: true },
-    { id: "m5", name: "Atorvastatin", dose: "20mg", slot: "night", color: "from-rose-500 to-red-500", status: "pending", purpose: "Cholesterol", reminder: true },
-    { id: "m6", name: "Melatonin", dose: "5mg", slot: "night", color: "from-indigo-500 to-violet-500", status: "pending", purpose: "Sleep Aid", reminder: false },
+    { id: "m1", name: "Lisinopril", dose: "10mg", slot: "morning", color: "from-blue-500 to-cyan-500", status: "taken", purpose: "Blood Pressure" },
+    { id: "m2", name: "Metformin", dose: "500mg", slot: "morning", color: "from-purple-500 to-pink-500", status: "taken", purpose: "Blood Sugar" },
+    { id: "m3", name: "Vitamin D3", dose: "2000 IU", slot: "afternoon", color: "from-amber-500 to-orange-500", status: "pending", purpose: "Immunity" },
+    { id: "m4", name: "Omega-3", dose: "1000mg", slot: "afternoon", color: "from-teal-500 to-emerald-500", status: "pending", purpose: "Heart Health" },
+    { id: "m5", name: "Atorvastatin", dose: "20mg", slot: "night", color: "from-rose-500 to-red-500", status: "pending", purpose: "Cholesterol" },
+    { id: "m6", name: "Melatonin", dose: "5mg", slot: "night", color: "from-indigo-500 to-violet-500", status: "pending", purpose: "Sleep Aid" },
 ];
 
 const INTERACTIONS = [
@@ -86,26 +85,12 @@ export default function MedicationTracker() {
                 id: Math.random().toString(36).substr(2, 9),
                 status: "pending",
                 color: "from-emerald-500 to-teal-500", // Default color
-                reminder: true,
                 ...formData as any
             };
             setMeds(prev => [...prev, newMed]);
             toast.success("Medication added");
         }
         handleOpenChange(false);
-    };
-
-    const toggleReminder = (id: string) => {
-        setMeds(prev => prev.map(m => {
-            if (m.id === id) {
-                const newStatus = !m.reminder;
-                toast(newStatus ? "Reminder set" : "Reminder disabled", {
-                    description: `Notifications ${newStatus ? "enabled" : "disabled"} for ${m.name}`
-                });
-                return { ...m, reminder: newStatus };
-            }
-            return m;
-        }));
     };
 
     const updateStatus = (id: string, status: MedStatus) => {
@@ -136,6 +121,9 @@ export default function MedicationTracker() {
                 <div>
                     <h1 className="text-2xl font-black text-white">Medication Tracker</h1>
                     <p className="text-sm text-white/40">Smart Schedule & Adherence Monitor</p>
+                    <p className="text-white/50 text-sm font-light max-w-2xl leading-relaxed mt-2">
+                        Never miss a dose again. Organize your medications, set reminders, and check for potential drug interactions to ensure your safety and well-being.
+                    </p>
                 </div>
                 <div className="ml-auto">
                     <Dialog open={isDialogOpen} onOpenChange={handleOpenChange}>
@@ -321,15 +309,6 @@ export default function MedicationTracker() {
                                         className="p-1.5 rounded-lg bg-white/5 hover:bg-red-500/10 text-white/40 hover:text-red-400 transition-colors"
                                     >
                                         <Trash2 className="size-3.5" />
-                                    </button>
-                                    <button
-                                        onClick={() => toggleReminder(med.id)}
-                                        className={cn(
-                                            "p-1.5 rounded-lg transition-colors",
-                                            med.reminder ? "bg-amber-500/10 text-amber-400" : "bg-white/5 text-white/40 hover:text-white"
-                                        )}
-                                    >
-                                        {med.reminder ? <Bell className="size-3.5" /> : <BellOff className="size-3.5" />}
                                     </button>
                                 </div>
                             </div>

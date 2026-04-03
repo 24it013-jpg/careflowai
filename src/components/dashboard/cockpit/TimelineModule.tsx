@@ -12,7 +12,8 @@ const EVENTS = [
 export function TimelineModule() {
     return (
         <motion.div
-            className="col-span-1 md:col-span-2 lg:col-span-8 bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 relative overflow-hidden flex flex-col justify-center"
+            id="timeline"
+            className="col-span-1 md:col-span-2 lg:col-span-8 bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 relative overflow-hidden flex flex-col justify-center scroll-mt-32"
             whileHover={{ scale: 1.01 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
         >

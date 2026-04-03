@@ -6,9 +6,9 @@ interface PageTransitionProps {
 }
 
 const variants = {
-    initial: { opacity: 0, y: 12, filter: "blur(4px)" },
-    animate: { opacity: 1, y: 0, filter: "blur(0px)" },
-    exit: { opacity: 0, y: -8, filter: "blur(2px)" },
+    initial: { opacity: 0, scale: 0.98, filter: "blur(8px)" },
+    animate: { opacity: 1, scale: 1, filter: "blur(0px)" },
+    exit: { opacity: 0, scale: 1.02, filter: "blur(4px)" },
 };
 
 export function PageTransition({ children }: PageTransitionProps) {
@@ -21,7 +21,12 @@ export function PageTransition({ children }: PageTransitionProps) {
             initial="initial"
             animate="animate"
             exit="exit"
-            transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+            transition={{ 
+                duration: 0.5, 
+                ease: [0.23, 1, 0.32, 1], // Custom cubic-bezier for buttery smooth motion
+                opacity: { duration: 0.4 },
+                scale: { duration: 0.6 }
+            }}
             className="flex-1 flex flex-col"
         >
             {children}

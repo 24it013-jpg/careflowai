@@ -2,12 +2,20 @@ import {
     ScanEye,
     Stethoscope,
     Pill,
+    HeartPulse,
     ShieldAlert,
     Database,
     MapPin,
     Wallet,
     RefreshCcw,
     Video,
+    ClipboardCheck,
+    Dumbbell,
+    Wallet,
+    Brain,
+    Shield,
+    Zap,
+    ShieldCheck,
 
     Mic,
     Users,
@@ -39,12 +47,30 @@ export const FEATURES: AppFeature[] = [
         colSpan: "col-span-12 md:col-span-8 lg:col-span-6"
     },
     {
+        id: "lab-decoder",
+        title: "Lab Report Decoder",
+        description: "Decode blood & urine tests.",
+        icon: ClipboardCheck,
+        color: "text-emerald-400",
+        link: "/dashboard/lab-reports",
+        colSpan: "col-span-12 md:col-span-4 lg:col-span-3"
+    },
+    {
         id: "med-check",
         title: "AI Med-Check",
-        description: "Prevent drug interactions.",
+        description: "Photo medicine & label recognition.",
         icon: ShieldAlert,
         color: "text-emerald-400",
         link: "/dashboard/med-check",
+        colSpan: "col-span-12 md:col-span-4 lg:col-span-3"
+    },
+    {
+        id: "open-health",
+        title: "Open Health Hub",
+        description: "Condition guides, diet focus & check-ins.",
+        icon: HeartPulse,
+        color: "text-sky-400",
+        link: "/dashboard/open-health",
         colSpan: "col-span-12 md:col-span-4 lg:col-span-3"
     },
     {
@@ -57,33 +83,6 @@ export const FEATURES: AppFeature[] = [
         colSpan: "col-span-12 md:col-span-4 lg:col-span-3"
     },
     {
-        id: "med-reminders",
-        title: "Smart Reminders",
-        description: "Never miss a dose.",
-        icon: Pill,
-        color: "text-pink-400",
-        link: "/dashboard/reminders",
-        colSpan: "col-span-6 md:col-span-4 lg:col-span-3"
-    },
-    {
-        id: "telemedicine",
-        title: "Telemedicine",
-        description: "Virtual consults.",
-        icon: Video,
-        color: "text-indigo-400",
-        link: "/dashboard/telemedicine",
-        colSpan: "col-span-6 md:col-span-4 lg:col-span-3"
-    },
-    {
-        id: "health-vault",
-        title: "Unified Vault",
-        description: "Secure records.",
-        icon: Database,
-        color: "text-amber-400",
-        link: "/dashboard/vault",
-        colSpan: "col-span-6 md:col-span-4 lg:col-span-3"
-    },
-    {
         id: "care-locator",
         title: "Care Locator",
         description: "Find help nearby.",
@@ -91,24 +90,6 @@ export const FEATURES: AppFeature[] = [
         color: "text-red-400",
         link: "/dashboard/nearby",
         colSpan: "col-span-6 md:col-span-4 lg:col-span-3"
-    },
-    {
-        id: "expense-ledger",
-        title: "Expense Ledger",
-        description: "Track medical costs.",
-        icon: Wallet,
-        color: "text-green-400",
-        link: "/dashboard/ledger",
-        colSpan: "col-span-6 md:col-span-3 lg:col-span-2"
-    },
-    {
-        id: "refill-predictor",
-        title: "Refill Predictor",
-        description: "AI Stock tracking.",
-        icon: RefreshCcw,
-        color: "text-cyan-400",
-        link: "/dashboard/refills",
-        colSpan: "col-span-6 md:col-span-3 lg:col-span-2"
     },
     {
         id: "ambient-scribe",
@@ -120,25 +101,6 @@ export const FEATURES: AppFeature[] = [
         colSpan: "col-span-6 md:col-span-3 lg:col-span-2"
     },
     {
-        id: "family-hub",
-        title: "Family Hub",
-        description: "Manage profiles.",
-        icon: Users,
-        color: "text-orange-400",
-        link: "/dashboard/family",
-        colSpan: "col-span-6 md:col-span-3 lg:col-span-2"
-    },
-    {
-        id: "booking",
-        title: "One-Tap Booking",
-        description: "Instant access.",
-        icon: CalendarCheck,
-        color: "text-lime-400",
-        link: "/dashboard/booking",
-        colSpan: "col-span-12 md:col-span-6 lg:col-span-4"
-    },
-
-    {
         id: "diet-nutrition",
         title: "Diet AI",
         description: "Meal plans & analysis.",
@@ -148,21 +110,21 @@ export const FEATURES: AppFeature[] = [
         colSpan: "col-span-6 md:col-span-3 lg:col-span-2"
     },
     {
-        id: "mental-health",
-        title: "Mind Monitor",
-        description: "Mood & wellness tracker.",
-        icon: Brain,
-        color: "text-violet-400",
-        link: "/dashboard/mental-health",
-        colSpan: "col-span-6 md:col-span-3 lg:col-span-2"
-    },
-    {
         id: "anatomy-ar",
         title: "AR Anatomy",
         description: "Real-time hand anatomy AR.",
         icon: Scan,
         color: "text-cyan-400",
-        link: "/anatomy-ar",
+        link: "/dashboard/anatomy-ar",
+        colSpan: "col-span-12 md:col-span-6 lg:col-span-4"
+    },
+    {
+        id: "fitness-yoga",
+        title: "Fitness & Yoga",
+        description: "AI Workouts & Breathing.",
+        icon: Dumbbell,
+        color: "text-blue-400",
+        link: "/dashboard/fitness-yoga",
         colSpan: "col-span-12 md:col-span-6 lg:col-span-4"
     },
     {
@@ -173,5 +135,68 @@ export const FEATURES: AppFeature[] = [
         color: "text-blue-400",
         link: "/dashboard/voice-agent",
         colSpan: "col-span-12 md:col-span-6 lg:col-span-4"
+    },
+    {
+        id: "expense-calculator",
+        title: "Medical Expense Hub",
+        description: "Bill analysis & cost calculator.",
+        icon: Wallet,
+        color: "text-indigo-400",
+        link: "/dashboard/expense-calculator",
+        colSpan: "col-span-12 md:col-span-6 lg:col-span-4"
+    },
+    {
+        id: "mental-health",
+        title: "Neural Sanctuary",
+        description: "AI Therapy & Meditation.",
+        icon: Brain,
+        color: "text-purple-400",
+        link: "/dashboard/mental-health",
+        colSpan: "col-span-12 md:col-span-6 lg:col-span-4"
+    },
+    {
+        id: "health-vault",
+        title: "Neural Health Vault",
+        description: "AI-indexed medical records.",
+        icon: Shield,
+        color: "text-blue-400",
+        link: "/dashboard/health-vault",
+        colSpan: "col-span-12 md:col-span-4 lg:col-span-3"
+    },
+    {
+        id: "longevity",
+        title: "Longevity Hub",
+        description: "Biohacking & Performance.",
+        icon: Zap,
+        color: "text-amber-400",
+        link: "/dashboard/longevity",
+        colSpan: "col-span-12 md:col-span-4 lg:col-span-3"
+    },
+    {
+        id: "immuno-tracker",
+        title: "Immuno-Tracker",
+        description: "AI Vaccination Management.",
+        icon: ShieldCheck,
+        color: "text-emerald-400",
+        link: "/dashboard/immuno-tracker",
+        colSpan: "col-span-12 md:col-span-4 lg:col-span-3"
+    },
+    {
+        id: "telemedicine",
+        title: "Telemedicine",
+        description: "Virtual consults.",
+        icon: Video,
+        color: "text-indigo-400",
+        link: "/dashboard/telemedicine",
+        colSpan: "col-span-6 md:col-span-4 lg:col-span-3"
+    },
+    {
+        id: "refill-predictor",
+        title: "Refill Predictor",
+        description: "AI Stock tracking.",
+        icon: RefreshCcw,
+        color: "text-orange-400",
+        link: "/dashboard/refills",
+        colSpan: "col-span-6 md:col-span-3 lg:col-span-2"
     },
 ];

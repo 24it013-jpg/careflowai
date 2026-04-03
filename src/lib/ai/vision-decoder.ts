@@ -1,9 +1,8 @@
 /**
- * AI Vision Decoder Service
- * Analyzes medical images using Google Gemini Vision
+ * AI Vision Decoder — uses callAIVision / callAI (OpenRouter vision models, then Gemini).
  */
 
-import { callGeminiVision, callGemini } from './gemini';
+import { callAIVision, callAI } from './gemini';
 
 function getBase64FromImageUrl(imageUrl: string): { data: string, mimeType: string } | null {
     if (imageUrl.startsWith('data:')) {
@@ -35,7 +34,7 @@ export interface TrendAnalysis {
 }
 
 /**
- * Analyze a single medical image using OpenAI Vision API
+ * Analyze a single medical image (OpenRouter vision → Gemini).
  */
 export async function analyzeImage(
     imageUrl: string,
@@ -48,49 +47,74 @@ export async function analyzeImage(
             throw new Error('Only data URLs are supported for image analysis currently.');
         }
 
-        const prompt = context
-            ? `Analyze this medical image with the following context: ${context}. Provide a detailed description, key findings, and recommendations. Format the response with sections for Description, Findings, and Recommendations.`
-            : 'Analyze this medical image. Provide a detailed description, key findings, and recommendations. Format the response with sections for Description, Findings, and Recommendations.';
+        const prompt = `Analyze this medical report/image.
+        Provide a professional clinical analysis with the following structure:
+        1. **Description**: A clear, concise summary of what the image shows.
+        2. **Findings**: A list of specific clinical observations or abnormalities.
+        3. **Recommendations**: Suggested next steps or follow-up actions.
+        4. **Confidence**: A numeric value between 0 and 1 representing the AI's confidence in this analysis.
 
-        const content = await callGeminiVision(prompt, imageData.data, imageData.mimeType);
+        Context: ${context || 'General medical screening'}
+        
+        Important: If this is a lab report or document, extract the key values and explain their significance. If it is an imaging scan (X-ray/MRI), describe the anatomical structures and any deviations from normal.`;
+
+        const content = await callAIVision(prompt, imageData.data, imageData.mimeType);
 
         // Parse the response into structured data
-        const lines: string[] = content.split('\n').filter((line: string) => line.trim());
         const findings: string[] = [];
         const recommendations: string[] = [];
         let description = '';
+        let confidence = 0.85;
 
-        let currentSection = 'description';
+        // Enhanced parsing for medical structure
+        const lines: string[] = content.split('\n').map(l => l.trim()).filter(Boolean);
+        let currentSection: 'description' | 'findings' | 'recommendations' | 'none' = 'none';
+
         for (const line of lines) {
             const lowerLine = line.toLowerCase();
-            if (lowerLine.includes('finding') || lowerLine.includes('observation')) {
+            
+            // Check for section headers
+            if (lowerLine.includes('description')) {
+                currentSection = 'description';
+                continue;
+            } else if (lowerLine.includes('finding')) {
                 currentSection = 'findings';
                 continue;
-            } else if (lowerLine.includes('recommendation') || lowerLine.includes('suggestion')) {
+            } else if (lowerLine.includes('recommendation')) {
                 currentSection = 'recommendations';
                 continue;
-            } else if (lowerLine.includes('description')) {
-                currentSection = 'description';
+            } else if (lowerLine.includes('confidence')) {
+                const match = line.match(/0?\.\d+/);
+                if (match) confidence = parseFloat(match[0]);
                 continue;
             }
 
+            // Extract content based on section
+            const cleanLine = line.replace(/^[-•*]\s*/, '').replace(/^\d+\.\s*/, '').trim();
+            if (!cleanLine) continue;
+
             if (currentSection === 'description' && !description) {
-                description = line.replace(/^\*\*Description:\*\*\s*/i, '');
+                description = cleanLine;
             } else if (currentSection === 'findings') {
-                findings.push(line.replace(/^[-•*]\s*/, ''));
+                findings.push(cleanLine);
             } else if (currentSection === 'recommendations') {
-                recommendations.push(line.replace(/^[-•*]\s*/, ''));
+                recommendations.push(cleanLine);
             }
         }
+
+        // Fallback if parsing failed
+        if (!description) description = content.split('\n')[0].substring(0, 150);
+        if (findings.length === 0) findings.push("Detailed analysis completed. See description for insights.");
+        if (recommendations.length === 0) recommendations.push("Consult with a specialist for clinical correlation.");
 
         return {
             id: crypto.randomUUID(),
             imageUrl,
             analysis: {
-                description: description || content.substring(0, 200),
-                findings: findings.length > 0 ? findings : ['Analysis completed'],
-                recommendations: recommendations.length > 0 ? recommendations : ['Consult with healthcare provider'],
-                confidence: 0.85, // Default confidence
+                description,
+                findings,
+                recommendations,
+                confidence,
             },
             timestamp: new Date(),
         };
@@ -200,21 +224,21 @@ export async function compareImages(
             throw new Error('Only data URLs are supported for image comparison currently.');
         }
 
-        // Gemini only supports one image per content part in basic helper, but we can call it twice or merge.
-        // Actually, Gemini supports multiple images in parts. Let's adjust lib helper or do it here.
-        // For simplicity, I'll update the helper or just do the fetch here.
-        // I'll update the helper to accept multiple parts.
+        const describePrompt =
+            'Describe this medical image in detail: visible anatomy or structures, any notable findings, image quality. Be concise but specific.';
 
-        const content = await callGemini('Compare these two medical images. Identify key differences and similarities.', undefined, [
-            {
-                role: 'user',
-                parts: [
-                    { text: 'Compare these two medical images. Identify key differences and similarities.' },
-                    { text: `Image 1 (base64): ${imageData1.data.substring(0, 100)}...` },
-                    { text: `Image 2 (base64): ${imageData2.data.substring(0, 100)}...` }
-                ]
-            }
-        ]);
+        const analysis1 = await callAIVision(describePrompt, imageData1.data, imageData1.mimeType);
+        const analysis2 = await callAIVision(describePrompt, imageData2.data, imageData2.mimeType);
+
+        const content = await callAI(
+            `Two medical images were analyzed separately.\n\n` +
+                `**Image 1 analysis:**\n${analysis1}\n\n**Image 2 analysis:**\n${analysis2}\n\n` +
+                `Compare them. Respond with clear sections titled: Comparison, Differences, Similarities. ` +
+                `Use bullet points under Differences and Similarities.`,
+            undefined,
+            [],
+            { temperature: 0.35 }
+        );
 
         // Parse response
         const lines: string[] = content.split('\n').filter((line: string) => line.trim());

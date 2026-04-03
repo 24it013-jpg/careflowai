@@ -26,7 +26,7 @@ export function BackToTop() {
                     transition={{ type: "spring", stiffness: 300, damping: 25 }}
                     onClick={scrollToTop}
                     aria-label="Back to top"
-                    className="fixed bottom-6 right-6 z-50 group"
+                    className="fixed bottom-44 right-12 z-50 group"
                 >
                     {/* Pulsing ring */}
                     <span className="absolute inset-0 rounded-full bg-blue-500/30 animate-ping group-hover:animate-none" />

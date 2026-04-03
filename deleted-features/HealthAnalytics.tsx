@@ -4,7 +4,6 @@ import { useHealthData } from "@/hooks/use-health-data";
 import { useHealthForecaster } from "@/hooks/use-health-forecaster";
 import { NeuralLab } from "./NeuralLab";
 import { ClinicalReport } from "./ClinicalReport";
-import { FamilySync } from "./FamilySync";
 import { MedicalIntelligence } from "./MedicalIntelligence";
 import { BioSync } from "./BioSync";
 import { ResilienceCenter } from "./ResilienceCenter";
@@ -31,7 +30,7 @@ const HEART_RATE_DATA = [
 export function HealthAnalytics() {
     const { vitals } = useHealthData();
     const { prediction, riskLevel, insight } = useHealthForecaster();
-    const [viewMode, setViewMode] = useState<"standard" | "simulator" | "family" | "bio" | "resilience" | "hive" | "oracle">("standard");
+    const [viewMode, setViewMode] = useState<"standard" | "simulator" | "bio" | "resilience" | "hive" | "oracle">("standard");
     const [isReportOpen, setIsReportOpen] = useState(false);
     const [score, setScore] = useState(75);
     const [status, setStatus] = useState("Optimal");
@@ -68,18 +67,16 @@ export function HealthAnalytics() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
                 <div>
                     <h2 className="text-2xl font-bold text-white tracking-tight">
-                        {viewMode === "simulator" ? "Neural Simulation Lab" : viewMode === "family" ? "Family Alpha Circle" : viewMode === "bio" ? "Bio-Sync Hub" : viewMode === "resilience" ? "Resilience Center" : "System Analytics"}
+                        {viewMode === "simulator" ? "Neural Simulation Lab" : viewMode === "bio" ? "Bio-Sync Hub" : viewMode === "resilience" ? "Resilience Center" : "System Analytics"}
                     </h2>
                     <p className="text-sm text-slate-400 font-medium">
                         {viewMode === "simulator"
                             ? "Test lifestyle impacts on your digital twin"
-                            : viewMode === "family"
-                                ? "Real-time synchronization with your inner circle"
-                                : viewMode === "bio"
-                                    ? "Multi-device Neural Synchronization"
-                                    : viewMode === "resilience"
-                                        ? "Neural Stress Mitigation & Coherence"
-                                        : "Predictive synthesis of your physiological core"
+                            : viewMode === "bio"
+                                ? "Multi-device Neural Synchronization"
+                                : viewMode === "resilience"
+                                    ? "Neural Stress Mitigation & Coherence"
+                                    : "Predictive synthesis of your physiological core"
                         }
                     </p>
                 </div>
@@ -104,15 +101,6 @@ export function HealthAnalytics() {
                             )}
                         >
                             Lab
-                        </button>
-                        <button
-                            onClick={() => setViewMode("family")}
-                            className={cn(
-                                "px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all",
-                                viewMode === "family" ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/20" : "text-white/40 hover:text-white"
-                            )}
-                        >
-                            Sync
                         </button>
                         <button
                             onClick={() => setViewMode("bio")}
@@ -224,8 +212,6 @@ export function HealthAnalytics() {
 
             {viewMode === "simulator" ? (
                 <NeuralLab />
-            ) : viewMode === "family" ? (
-                <FamilySync />
             ) : viewMode === "bio" ? (
                 <BioSync />
             ) : viewMode === "resilience" ? (

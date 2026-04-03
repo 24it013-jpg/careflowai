@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Zap, Bell, Brain } from "lucide-react";
+import { Zap, Activity, Brain } from "lucide-react";
 import { useHealthData } from "@/hooks/use-health-data";
 
 interface StreamItem {
@@ -59,7 +59,7 @@ export function NeuralStream() {
                         <div className={`p-1 rounded-md ${item.type === 'warning' ? 'bg-amber-500/10' :
                             item.type === 'success' ? 'bg-emerald-500/10' : 'bg-blue-500/10'
                             }`}>
-                            {item.type === 'warning' ? <Bell className="size-3 text-amber-400" /> :
+                            {item.type === 'warning' ? <Activity className="size-3 text-amber-400" /> :
                                 item.type === 'success' ? <Zap className="size-3 text-emerald-400" /> :
                                     <Brain className="size-3 text-blue-400" />}
                         </div>

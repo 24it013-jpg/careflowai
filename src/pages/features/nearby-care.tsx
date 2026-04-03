@@ -97,53 +97,21 @@ export default function NearbyCareLocator() {
                     <div className="absolute bottom-[10%] right-[10%] w-[40%] h-[40%] bg-teal-600/15 rounded-full blur-[100px] mix-blend-screen" />
                 </div>
 
-                {/* Header */}
-                <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10"
-                >
-                    <div>
-                        <h1 className="text-4xl font-light tracking-tight text-white flex items-center gap-3">
-                            <span className="p-2 bg-blue-500/10 border border-blue-500/20 rounded-xl text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.15)]">
-                                <Globe className="size-6" />
-                            </span>
-                            Nearby Care Radar
-                        </h1>
-                        <p className="text-white/50 mt-2 text-lg font-light">
-                            {symptomContext === "breathing problems" ? 
-                                "Prioritizing Respiratory & Emergency Care" : 
-                                "Locate Emergency & Specialist Services Instantly"}
-                        </p>
-                    </div>
-                    <div className="flex gap-3">
-                        {symptomContext && (
-                            <Badge variant="outline" className="bg-blue-500/10 border-blue-500/30 text-blue-400 px-4 py-1.5 rounded-full animate-pulse border flex items-center gap-2">
-                                <Activity className="h-3 w-3" />
-                                Context: {symptomContext}
-                                <Button 
-                                    variant="ghost" 
-                                    size="sm" 
-                                    className="h-4 w-4 p-0 ml-1 hover:bg-transparent text-blue-400/50 hover:text-white"
-                                    onClick={() => setSymptomContext("")}
-                                >
-                                    ×
-                                </Button>
-                            </Badge>
-                        )}
-                        <Button 
-                            variant="outline" 
-                            className={cn(
-                                "border-white/10 bg-white/5 text-white/70 hover:text-white hover:bg-white/10 hover:border-white/20 backdrop-blur-sm transition-all",
-                                symptomContext === "breathing problems" && "border-blue-500/50 bg-blue-500/10 text-blue-400"
-                            )}
-                            onClick={() => setSymptomContext("breathing problems")}
-                        >
-                            <AlertCircle className="h-4 w-4 mr-2" />
-                            Breathing Mode
-                        </Button>
-                    </div>
-                </motion.div>
+                <header className="mb-8">
+                    <motion.h1
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-4xl font-black tracking-tight flex items-center gap-4 text-white mb-4"
+                    >
+                        <span className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-2xl text-blue-400 shadow-lg shadow-blue-500/10">
+                            <MapPin className="size-8" />
+                        </span>
+                        Nearby Care Locator
+                    </motion.h1>
+                    <p className="text-white/50 text-lg font-light max-w-2xl leading-relaxed">
+                        Find the best medical facilities near you. Locate hospitals, clinics, and pharmacies quickly with our AI-powered map and personalized recommendations.
+                    </p>
+                </header>
 
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[700px] relative z-10">
                     {/* Map Area */}

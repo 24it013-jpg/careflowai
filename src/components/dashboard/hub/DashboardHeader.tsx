@@ -1,26 +1,22 @@
 import { motion } from "framer-motion";
-import { Home, Activity, Clock, Grid3x3, BarChart3, Sparkles } from "lucide-react";
+import { Home, Activity, Clock, Grid3x3, BarChart3, Sparkles, Dumbbell } from "lucide-react";
 import { NeuralStream } from "./NeuralStream";
-import { NotificationBell } from "./NotificationCenter";
 import { useHealthForecaster } from "@/hooks/use-health-forecaster";
 import { useHealthData } from "@/hooks/use-health-data";
 
 interface DashboardHeaderProps {
     activeSection: string;
     onSectionChange: (section: string) => void;
-    onNotifClick?: () => void;
-    unreadCount?: number;
 }
 
 const NAV_ITEMS = [
     { id: "overview", label: "Overview", icon: Home },
-    { id: "vitals", label: "Vitals", icon: Activity },
     { id: "timeline", label: "Timeline", icon: Clock },
     { id: "features", label: "Features", icon: Grid3x3 },
-    { id: "analytics", label: "Analytics", icon: BarChart3 },
+    { id: "fitness", label: "Fitness & Yoga", icon: Dumbbell },
 ];
 
-export function DashboardHeader({ activeSection, onSectionChange, onNotifClick, unreadCount = 0 }: DashboardHeaderProps) {
+export function DashboardHeader({ activeSection, onSectionChange }: DashboardHeaderProps) {
     const { riskLevel } = useHealthForecaster();
     const { vitals } = useHealthData();
 
@@ -84,7 +80,7 @@ export function DashboardHeader({ activeSection, onSectionChange, onNotifClick, 
                         })}
                     </nav>
 
-                    {/* Right Side: Neural Stream + Notification Bell */}
+                    {/* Right Side: Neural Stream */}
                     <div className="flex items-center gap-4">
                         {/* Neural Stream Ticker */}
                         <div className="hidden xl:block flex-1 max-w-md border-l border-white/10 pl-8 h-[70px]">
@@ -94,9 +90,6 @@ export function DashboardHeader({ activeSection, onSectionChange, onNotifClick, 
                             </div>
                             <NeuralStream />
                         </div>
-
-                        {/* Notification Bell */}
-                        <NotificationBell onClick={onNotifClick ?? (() => { })} count={unreadCount} />
                     </div>
                 </div>
             </div>

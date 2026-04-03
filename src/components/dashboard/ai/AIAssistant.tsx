@@ -23,8 +23,7 @@ interface Message {
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { callAI } from "@/lib/ai/gemini";
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import { AIResponseCard } from "@/components/ui/ai-response-card";
 
 interface AIAssistantProps {
     open: boolean;
@@ -151,29 +150,34 @@ export function AIAssistant({ open, onOpenChange, initialMessage }: AIAssistantP
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     className={cn(
-                                        "flex gap-3 text-sm",
-                                        message.role === "user" ? "flex-row-reverse ml-auto" : "flex-row mr-auto"
+                                        "flex flex-col gap-2",
+                                        message.role === "user" ? "items-end" : "items-start"
                                     )}
                                 >
-                                    <Avatar className="h-8 w-8 shrink-0">
-                                        <AvatarFallback className={message.role === "user" ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-600"}>
-                                            {message.role === "user" ? "YOU" : <Bot className="h-4 w-4" />}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    <div className={cn(
-                                        "rounded-2xl px-4 py-2 max-w-[80%] leading-relaxed overflow-hidden",
-                                        message.role === "user"
-                                            ? "bg-blue-600 text-white rounded-tr-none shadow-md shadow-blue-100"
-                                            : "bg-slate-100 text-slate-800 rounded-tl-none border border-slate-200 shadow-sm markdown-content-light"
-                                    )}>
-                                        {message.role === "user" ? (
-                                            message.content
-                                        ) : (
-                                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                                {message.content}
-                                            </ReactMarkdown>
-                                        )}
+                                    <div className="flex items-center gap-2 mb-1 px-1">
+                                        <Avatar className="h-5 w-5">
+                                            <AvatarFallback className={message.role === "user" ? "bg-blue-600 text-white text-[8px]" : "bg-slate-100 text-slate-600 text-[8px]"}>
+                                                {message.role === "user" ? "YOU" : <Bot className="h-3 w-3" />}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                            {message.role === "user" ? "You" : "CAREflow AI"}
+                                        </span>
                                     </div>
+
+                                    {message.role === "user" ? (
+                                         <div className="bg-blue-600 text-white rounded-2xl rounded-tr-none px-4 py-2 max-w-[85%] leading-relaxed shadow-md shadow-blue-100 text-sm">
+                                             {message.content}
+                                         </div>
+                                     ) : (
+                                         <AIResponseCard 
+                                             content={message.content}
+                                             title="AI Consultation"
+                                             source="Health Companion"
+                                             compact={true}
+                                             className="max-w-full !p-0 !bg-white !text-slate-900 !border-slate-200 !shadow-sm [&_.prose]:text-slate-700 [&_.prose-headings]:text-slate-900 [&_.prose-strong]:text-blue-600"
+                                         />
+                                     )}
                                 </motion.div>
                             ))}
                         </AnimatePresence>

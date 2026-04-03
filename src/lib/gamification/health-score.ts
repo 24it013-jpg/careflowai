@@ -262,7 +262,7 @@ function generateInsights(metrics: HealthMetrics, breakdown: HealthScore['breakd
 
     // Medication insights
     if (breakdown.medication < 80) {
-        insights.push('Improve medication adherence by setting reminders and using our Smart Reminders feature.');
+        insights.push('Improve medication adherence by keeping a consistent daily schedule.');
     }
 
     // Activity insights
@@ -288,10 +288,10 @@ function generateInsights(metrics: HealthMetrics, breakdown: HealthScore['breakd
     // Mental health insights
     if (breakdown.mental < 70) {
         if (metrics.mental.stressLevel && metrics.mental.stressLevel > 7) {
-            insights.push('High stress detected. Try our meditation exercises or speak with a mental health professional.');
+            insights.push('High stress detected. Consider practicing mindfulness or relaxation techniques.');
         }
         if (metrics.mental.moodScore && metrics.mental.moodScore < 5) {
-            insights.push('Your mood has been low. Consider journaling or reaching out to our mental health resources.');
+            insights.push('Your mood has been low. It might be helpful to talk to someone or keep a journal.');
         }
     }
 

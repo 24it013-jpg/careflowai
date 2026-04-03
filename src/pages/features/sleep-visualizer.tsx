@@ -92,6 +92,9 @@ export default function SleepVisualizer() {
                 <div>
                     <h1 className="text-2xl font-black text-white">Sleep Visualizer</h1>
                     <p className="text-sm text-white/40">Last night · Feb 18 · 7h 32m total</p>
+                    <p className="text-white/50 text-sm font-light max-w-2xl leading-relaxed mt-2">
+                        Gain deep insights into your sleep quality. Our AI visualizes your sleep stages, tracks cycles, and provides actionable advice for a more restful night.
+                    </p>
                 </div>
                 <div className="ml-auto px-4 py-2 rounded-2xl bg-indigo-500/10 border border-indigo-500/20">
                     <span className="text-2xl font-black text-indigo-400">85</span>

@@ -123,7 +123,9 @@ export default function AmbientScribe() {
                             </span>
                             Ambient Scribe
                         </h1>
-                        <p className="text-slate-400 mt-2 text-lg">AI-powered voice-to-structured-notes.</p>
+                        <p className="text-white/50 text-lg font-light max-w-2xl leading-relaxed mt-4">
+                            Ambient Scribe converts your voice into structured medical notes (SOAP format) using AI. Perfect for capturing consultations and patient interactions effortlessly.
+                        </p>
                     </header>
 
                     <div className="flex-1 premium-glass-panel rounded-3xl p-8 relative flex flex-col items-center justify-center overflow-hidden group">
@@ -274,7 +276,7 @@ export default function AmbientScribe() {
                                     <div className="absolute top-0 right-0 w-1/3 h-[1px] bg-gradient-to-l from-fuchsia-500/50 to-transparent" />
                                     <Button className="w-full bg-gradient-to-r from-fuchsia-600 to-purple-600 hover:from-fuchsia-500 hover:to-purple-500 text-white rounded-xl h-12 text-lg border border-fuchsia-500/30 shadow-[0_0_15px_rgba(217,70,239,0.2)] hover:shadow-[0_0_25px_rgba(217,70,239,0.4)] transition-all duration-300 transform hover:-translate-y-0.5">
                                         <Save className="size-5 mr-2" />
-                                        Save to Health Vault
+                                        Save to Medical Records
                                     </Button>
                                 </div>
                             </motion.div>

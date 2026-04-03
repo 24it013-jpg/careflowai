@@ -1,5 +1,4 @@
-import { Settings, User, MessageSquare, Sparkles } from "lucide-react";
-import { NotificationBell } from "@/components/dashboard/NotificationBell";
+import { Settings, User, MessageSquare, HeartPulse, Menu } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -13,12 +12,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { motion } from "motion/react";
 import { useAIChat } from "@/hooks/use-ai-chat";
+import { useSidebarStore } from "@/hooks/use-sidebar-store";
 
 import { ModeToggle } from "@/components/ui/mode-toggle";
 
 export function TopNav() {
     const navigate = useNavigate();
     const { openChat } = useAIChat();
+    const { toggle } = useSidebarStore();
 
     return (
         <motion.header
@@ -30,17 +31,30 @@ export function TopNav() {
             <div className="max-w-[1800px] w-full mx-auto flex items-center justify-between">
 
                 {/* 1. Logo & Brand */}
-                <div className="flex items-center gap-3">
-                    <div className="relative size-10 flex items-center justify-center">
-                        <div className="absolute inset-0 bg-blue-500/20 blur-lg rounded-full" />
-                        <motion.div
-                            whileHover={{ rotate: 180 }}
-                            transition={{ duration: 0.5, ease: "easeInOut" }}
-                        >
-                            <Sparkles className="size-8 text-blue-400 relative z-10" />
-                        </motion.div>
+                <div className="flex items-center gap-4">
+                    <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={toggle}
+                        className="hidden md:flex bg-white/5 border border-white/10 text-white rounded-xl hover:bg-white/10 transition-colors"
+                    >
+                        <Menu className="size-5" />
+                    </Button>
+                    <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/dashboard')}>
+                        <div className="relative size-10 flex items-center justify-center">
+                            <div className="absolute inset-0 bg-blue-500/20 blur-lg rounded-full" />
+                            <motion.div
+                                whileHover={{ rotate: 180 }}
+                                transition={{ duration: 0.5, ease: "easeInOut" }}
+                            >
+                                <HeartPulse className="size-8 text-blue-400 relative z-10" />
+                            </motion.div>
+                        </div>
+                        <span className="font-bold text-xl tracking-tight">
+                            <span className="text-blue-500">CARE</span>
+                            <span className="text-white">FLOW AI</span>
+                        </span>
                     </div>
-                    <span className="font-bold text-xl tracking-tight text-white">CAREflow AI</span>
                 </div>
 
                 {/* 2. Right Actions */}
@@ -59,7 +73,6 @@ export function TopNav() {
 
                     <div className="flex items-center gap-2">
                         <ModeToggle />
-                        <NotificationBell />
 
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>

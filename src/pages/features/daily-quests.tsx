@@ -58,6 +58,9 @@ export default function DailyQuests() {
                                 <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em]">AI-Generated Health Objectives</p>
                             </div>
                         </div>
+                        <p className="text-white/50 text-lg font-light max-w-2xl leading-relaxed mt-4">
+                            Complete daily health quests to maintain your wellness routine. Earn XP and track your progress toward long-term health goals through gamified activities.
+                        </p>
                     </motion.div>
                     
                     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-4">

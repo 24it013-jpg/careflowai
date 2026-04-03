@@ -62,10 +62,13 @@ export default function AchievementsPage() {
                                 <Trophy className="size-7 text-white group-hover:scale-110 transition-transform" />
                             </div>
                             <div>
-                                <h1 className="text-4xl font-black text-white tracking-tighter">Achievement Arena</h1>
-                                <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em]">Personal Milestones & Global Rank</p>
+                                <h1 className="text-4xl font-black text-white tracking-tighter uppercase">Health Achievements</h1>
+                                <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.4em]">Milestones & Gamified Health Progress</p>
                             </div>
                         </div>
+                        <p className="text-white/50 text-lg font-light max-w-2xl leading-relaxed mt-4">
+                            Track your health journey through earned badges and milestones. Celebrate your progress as you reach new levels of wellness and consistency.
+                        </p>
                     </motion.div>
 
                     <motion.div 

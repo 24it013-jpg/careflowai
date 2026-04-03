@@ -16,14 +16,14 @@ export function DashboardContainer({ children }: { children: React.ReactNode }) 
             />
 
             {/* 2. Ambient Glows */}
-            <div className="absolute top-[-200px] left-[-200px] w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[150px] pointer-events-none z-0" />
-            <div className="absolute bottom-[-100px] right-[-100px] w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none z-0" />
+            <div className="absolute top-[-200px] left-[-200px] w-[600px] h-[600px] bg-blue-600/5 rounded-full blur-[180px] pointer-events-none z-0" />
+            <div className="absolute bottom-[-100px] right-[-100px] w-[500px] h-[500px] bg-purple-600/5 rounded-full blur-[140px] pointer-events-none z-0" />
 
-            {/* 3. Scanning Line Effect (Radar) */}
+            {/* 3. Scanning Line Effect (Radar) - Throttled and lower opacity */}
             <motion.div
-                className="absolute inset-0 z-0 pointer-events-none opacity-[0.02] bg-gradient-to-b from-transparent via-cyan-500 to-transparent h-[200px]"
-                animate={{ top: ['-20%', '120%'] }}
-                transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0 z-0 pointer-events-none opacity-[0.01] bg-gradient-to-b from-transparent via-cyan-500 to-transparent h-[150px] will-change-transform"
+                animate={{ y: ['-50%', '150%'] }}
+                transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
             />
 
             {/* --- Content Content --- */}

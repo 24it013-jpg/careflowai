@@ -33,14 +33,18 @@ export default function RefillPredictor() {
 
             <div className="max-w-5xl mx-auto relative z-10">
                 <header className="mb-12">
-                    <h1 className="text-4xl font-light tracking-tight flex items-center gap-4 text-white mb-4">
-                        <span className="p-3 bg-cyan-500/10 border border-cyan-500/20 rounded-2xl text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.15)] backdrop-blur-sm">
+                    <motion.h1
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-4xl font-black tracking-tight flex items-center gap-4 text-white mb-4"
+                    >
+                        <span className="p-3 bg-cyan-500/10 border border-cyan-500/20 rounded-2xl text-cyan-400 shadow-lg shadow-cyan-500/10">
                             <RefreshCcw className="size-8" />
                         </span>
                         AI Refill Predictor
-                    </h1>
-                    <p className="text-white/50 text-lg font-light max-w-2xl">
-                        Smart inventory tracking for your medications. Our AI predicts stock levels and auto-suggests refills.
+                    </motion.h1>
+                    <p className="text-white/50 text-lg font-light max-w-2xl leading-relaxed">
+                        Never run out of your essential medications. Our AI tracks your current stock and predicts when you'll need a refill, helping you stay prepared and consistent.
                     </p>
                 </header>
 
