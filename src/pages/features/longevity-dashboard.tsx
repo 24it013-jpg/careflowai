@@ -4,7 +4,7 @@ import {
     Zap, Activity, Moon, Clock, Heart, 
     ArrowUpRight, TrendingUp, Info, AlertCircle,
     Sparkles, RefreshCcw, Coffee, Sun, 
-    Dumbbell, Utensils, Brain, Shield, ChevronRight
+    Dumbbell, Utensils, Brain, Shield, ChevronRight, Pill
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";

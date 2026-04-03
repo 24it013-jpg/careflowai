@@ -1,0 +1,1 @@
+import{ax as a}from"./vendor-react-Q_Gn7dIx.js";const t=a(e=>({isOpen:!1,initialMessage:"",openChat:(s="")=>e({isOpen:!0,initialMessage:s}),closeChat:()=>e({isOpen:!1,initialMessage:""}),setIsOpen:s=>e({isOpen:s})}));export{t as u};

@@ -11,17 +11,14 @@ import {
     Video,
     ClipboardCheck,
     Dumbbell,
-    Wallet,
     Brain,
     Shield,
     Zap,
     ShieldCheck,
-
     Mic,
     Users,
     CalendarCheck,
     Utensils,
-    Brain,
     Scan,
 } from "lucide-react";
 

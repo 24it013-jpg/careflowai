@@ -1,0 +1,26 @@
+src/components/dashboard/medical-magic/medical-apps-data.ts(9,5): error TS2300: Duplicate identifier 'Wallet'.
+src/components/dashboard/medical-magic/medical-apps-data.ts(14,5): error TS2300: Duplicate identifier 'Wallet'.
+src/components/dashboard/medical-magic/medical-apps-data.ts(15,5): error TS2300: Duplicate identifier 'Brain'.
+src/components/dashboard/medical-magic/medical-apps-data.ts(24,5): error TS2300: Duplicate identifier 'Brain'.
+src/components/layout/side-nav.tsx(59,21): error TS2322: Type 'number[]' is not assignable to type 'Easing | Easing[] | undefined'.
+  Type 'number[]' is not assignable to type 'EasingFunction | Easing[]'.
+    Type 'number[]' is not assignable to type 'Easing[]'.
+      Type 'number' is not assignable to type 'Easing'.
+src/components/layout/side-nav.tsx(103,58): error TS2322: Type 'number[]' is not assignable to type 'Easing | Easing[] | undefined'.
+  Type 'number[]' is not assignable to type 'EasingFunction | Easing[]'.
+    Type 'number[]' is not assignable to type 'Easing[]'.
+      Type 'number' is not assignable to type 'Easing'.
+src/components/layout/side-nav.tsx(204,54): error TS2322: Type 'number[]' is not assignable to type 'Easing | Easing[] | undefined'.
+  Type 'number[]' is not assignable to type 'EasingFunction | Easing[]'.
+    Type 'number[]' is not assignable to type 'Easing[]'.
+      Type 'number' is not assignable to type 'Easing'.
+src/components/layout/side-nav.tsx(226,58): error TS2322: Type 'number[]' is not assignable to type 'Easing | Easing[] | undefined'.
+  Type 'number[]' is not assignable to type 'EasingFunction | Easing[]'.
+    Type 'number[]' is not assignable to type 'Easing[]'.
+      Type 'number' is not assignable to type 'Easing'.
+src/pages/features/diet-nutrition.tsx(354,49): error TS18048: 'results.macros.protein' is possibly 'undefined'.
+src/pages/features/diet-nutrition.tsx(355,53): error TS18048: 'results.macros.carbs' is possibly 'undefined'.
+src/pages/features/diet-nutrition.tsx(356,43): error TS18048: 'results.macros.fats' is possibly 'undefined'.
+src/pages/features/longevity-dashboard.tsx(236,54): error TS2304: Cannot find name 'Pill'.
+src/pages/features/voice-agent.tsx(95,33): error TS2339: Property 'elevenlabs-convai' does not exist on type 'JSX.IntrinsicElements'.
+src/pages/features/voice-agent.tsx(95,98): error TS2339: Property 'elevenlabs-convai' does not exist on type 'JSX.IntrinsicElements'.

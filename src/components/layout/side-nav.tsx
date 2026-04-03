@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useSidebarStore } from "@/hooks/use-sidebar-store";
 
 // Optimization: Use professional cubic-bezier for liquid motion signature
-const LIQUID_EASE = [0.23, 1, 0.32, 1];
+const LIQUID_EASE: [number, number, number, number] = [0.23, 1, 0.32, 1];
 
 export function SideNav() {
     const [isHovered, setIsHovered] = useState(false);

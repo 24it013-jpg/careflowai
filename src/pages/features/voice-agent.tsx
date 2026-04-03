@@ -92,6 +92,7 @@ export default function VoiceAgent() {
 
                             {/* ElevenLabs Widget Integration */}
                             <div className="pt-8">
+                                {/* @ts-ignore */}
                                 <elevenlabs-convai agent-id="agent_9001kmr5tx86eexay24p7ew8mvp8"></elevenlabs-convai>
                             </div>
                         </div>

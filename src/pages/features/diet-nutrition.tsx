@@ -351,9 +351,9 @@ Based on your clinical profile, here is your personalized nutrition strategy for
 | Nutrient | Target | Calories |
 | :--- | :--- | :--- |
 | **Daily Calories** | **${results?.targetCalories} kcal** | 100% |
-| **Protein** | ${results?.macros.protein}g | ${results?.macros.protein * 4} kcal |
-| **Carbohydrates** | ${results?.macros.carbs}g | ${results?.macros.carbs * 4} kcal |
-| **Fats** | ${results?.macros.fats}g | ${results?.macros.fats * 9} kcal |
+| **Protein** | ${results?.macros?.protein ?? 0}g | ${(results?.macros?.protein ?? 0) * 4} kcal |
+| **Carbohydrates** | ${results?.macros?.carbs ?? 0}g | ${(results?.macros?.carbs ?? 0) * 4} kcal |
+| **Fats** | ${results?.macros?.fats ?? 0}g | ${(results?.macros?.fats ?? 0) * 9} kcal |
 
 ## Recommended Meal Strategy (${stats.dietPreference.toUpperCase()})
 ${meals.map((meal, idx) => `
