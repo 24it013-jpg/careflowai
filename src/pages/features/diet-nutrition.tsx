@@ -361,7 +361,7 @@ ${meals.map((meal, idx) => `
 - **Type:** ${meal.type}
 - **Calories:** ${meal.calories} kcal
 - **Protein:** ${meal.protein}g | **Carbs:** ${meal.carbs}g | **Fats:** ${meal.fats}g
-- **Key Ingredients:** ${meal.ingredients.join(', ')}
+- **Key Ingredients:** ${(meal.ingredients || []).join(', ')}
 `).join('\n')}
 
 ## Clinical Recommendations
